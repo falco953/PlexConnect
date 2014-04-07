@@ -472,19 +472,21 @@ def getXMLFromMultiplePMS(ATV_udid, path, type, options={}):
                     if 'art' in Dir.attrib:
                         Dir.set('art',    PMS_mark + getURL('', path, Dir.get('art')))
                     Server.append(Dir)
-                
+                    
                 for Video in XML.getiterator('Video'):  # copy "Video" content, add PMS to links
                     key = Video.get('key')  # absolute path
-                    Video.set('key',    PMS_baseURL + getURL('', path, key))
+                    Video.set('key',    PMS_mark + getURL('', path, key))
                     Video.set('refreshKey', getURL(baseURL, path, key) + '/refresh')
                     if 'thumb' in Video.attrib:
-                        Video.set('thumb',  PMS_baseURL + getURL('', path, Video.get('thumb')))                    
+                        Video.set('thumb',  PMS_mark + getURL('', path, Video.get('thumb')))                    
                     if 'grandparentThumb' in Video.attrib:
-                        Video.set('grandparentThumb',  PMS_baseURL + getURL('', path, Video.get('grandparentThumb')))                    
+                        Video.set('grandparentThumb',  PMS_mark + getURL('', path, Video.get('grandparentThumb'))) 
+                    if 'grandparentKey' in Video.attrib:
+                        Video.set('grandparentKey',  PMS_mark + getURL('', path, Video.get('grandparentKey')))                    
                     if 'parentThumb' in Video.attrib:
-                        Video.set('parentThumb',  PMS_baseURL + getURL('', path, Video.get('parentThumb')))
+                        Video.set('parentThumb',  PMS_mark + getURL('', path, Video.get('parentThumb')))
                     if 'art' in Video.attrib:
-                        Video.set('art',    PMS_baseURL + getURL('', path, Video.get('art')))
+                        Video.set('art',    PMS_mark + getURL('', path, Video.get('art')))
                     Server.append(Video)
     
     root.set('size', str(len(root.findall('Server'))))
