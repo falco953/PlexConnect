@@ -113,9 +113,9 @@ class MyHandler(BaseHTTPRequestHandler):
             
             # add client address - to be used in case UDID is unknown
             if 'X-Forwarded-For' in self.headers:
-                 options['aTVAddress'] = self.headers['X-Forwarded-For'].split(',', 1)[0]
-             else:
-                 options['aTVAddress'] = self.client_address[0]
+                options['aTVAddress'] = self.headers['X-Forwarded-For'].split(',', 1)[0]
+            else:
+                options['aTVAddress'] = self.client_address[0]
             
             # get aTV hard-/software parameters
             options['aTVFirmwareVersion'] = self.headers.get('X-Apple-TV-Version', '5.1')

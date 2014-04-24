@@ -286,14 +286,14 @@ def XML_PMS2aTV(PMS_address, path, options):
         XMLtemplate = 'HomeVideoSection.xml'
         
     elif cmd == 'TVSection':
-        XMLtemplate = 'TVSection.xml'    
-    
+        XMLtemplate = 'TVSection.xml'
+        
     elif cmd == 'LibraryOnDeck':
         XMLtemplate = 'Library_OnDeck.xml'    
         
     elif cmd == 'LibraryRecentlyAdded':
         XMLtemplate = 'Library_RecentlyAdded.xml'
-    
+        
     elif cmd.find('SectionPreview') != -1:
         XMLtemplate = cmd + '.xml'
     
@@ -331,11 +331,11 @@ def XML_PMS2aTV(PMS_address, path, options):
     elif cmd=='SettingsVideoOSD':
         XMLtemplate = 'Settings_VideoOSD.xml'
         path = ''  # clear path - we don't need PMS-XML
-    
+        
     elif cmd=='SettingsLibrary':
         XMLtemplate = 'Settings_Library.xml'
         path = ''  # clear path - we don't need PMS-XML
-        
+    
     elif cmd=='SettingsMovies':
         XMLtemplate = 'Settings_Movies.xml'
         path = ''  # clear path - we don't need PMS-XML
@@ -350,6 +350,7 @@ def XML_PMS2aTV(PMS_address, path, options):
 
     elif cmd=='SettingsTopLevel':
         XMLtemplate = 'Settings_TopLevel.xml'
+        path = ''  # clear path - we don't need PMS-XML
         
     elif cmd.startswith('SettingsToggle:'):
         opt = cmd[len('SettingsToggle:'):]  # cut command:
@@ -402,7 +403,7 @@ def XML_PMS2aTV(PMS_address, path, options):
         XMLtemplate = 'ChannelsVideoSearchResults.xml'
         
     elif path=='/library/sections':  # from PlexConnect.xml -> for //local, //myplex
-        XMLtemplate = 'Library_'+g_ATVSettings.getSetting(options['PlexConnectUDID'], 'libraryview')+'.xml'    
+        XMLtemplate = 'Library_'+g_ATVSettings.getSetting(options['PlexConnectUDID'], 'libraryview')+'.xml' 
     
     elif path=='/channels/all':
         XMLtemplate = 'Channel_'+g_ATVSettings.getSetting(options['PlexConnectUDID'], 'channelview')+'.xml'
@@ -488,15 +489,15 @@ def XML_PMS2aTV(PMS_address, path, options):
             # TV Episode view
             XMLtemplate = 'Episode.xml'
     
-      elif PMSroot.get('viewGroup','')=='photo' or \
-        path.startswith('/photos') or \
+    elif PMSroot.get('viewGroup','')=='photo' or \
+       path.startswith('/photos') or \
        PMSroot.find('Photo')!=None:
         if PMSroot.find('Directory')==None:
             # Photos only - directly show
-             XMLtemplate = 'Photo_Browser.xml'
-         else:
-             # Photo listing / directory
-             XMLtemplate = 'Photo_Directories.xml'
+            XMLtemplate = 'Photo_Browser.xml'
+        else:
+            # Photo listing / directory
+            XMLtemplate = 'Photo_Directories.xml'
     
     else:
         XMLtemplate = 'Directory.xml'
@@ -994,24 +995,24 @@ class CCommandCollection(CCommandHelper):
         
         AuthToken = PlexAPI.getPMSProperty(self.ATV_udid, PMS_uuid, 'accesstoken')
         
-         # transcoder action
-         transcoderAction = g_ATVSettings.getSetting(self.ATV_udid, 'phototranscoderaction')
-         
-         # aTV native filetypes
-         parts = key.rsplit('.',1)
-         photoATVNative = parts[-1].lower() in ['jpg','jpeg','tif','tiff','gif','png']
-         dprint(__name__, 2, "photo: ATVNative - {0}", photoATVNative)
-         
-         if width=='' and \
-            transcoderAction=='Auto' and \
-            photoATVNative:
+        # transcoder action
+        transcoderAction = g_ATVSettings.getSetting(self.ATV_udid, 'phototranscoderaction')
+        
+        # aTV native filetypes
+        parts = key.rsplit('.',1)
+        photoATVNative = parts[-1].lower() in ['jpg','jpeg','tif','tiff','gif','png']
+        dprint(__name__, 2, "photo: ATVNative - {0}", photoATVNative)
+        
+        if width=='' and \
+           transcoderAction=='Auto' and \
+           photoATVNative:
             # direct play
             res = PlexAPI.getDirectImagePath(key, AuthToken)
         else:
             if width=='':
-                 width = 1920  # max for HDTV. Relate to aTV version? Increase for KenBurns effect?
-             if height=='':
-                 height = 1080  # as above
+                width = 1920  # max for HDTV. Relate to aTV version? Increase for KenBurns effect?
+            if height=='':
+                height = 1080  # as above
             # request transcoding
             res = PlexAPI.getTranscodeImagePath(key, AuthToken, self.path[srcXML], width, height)
         
@@ -1030,45 +1031,44 @@ class CCommandCollection(CCommandHelper):
         
         AuthToken = PlexAPI.getPMSProperty(self.ATV_udid, self.PMS_uuid, 'accesstoken')
         
-         if not Track:
-             # not a complete audio/track structure - take key directly and build direct-play path
-             key, leftover, dfltd = self.getKey(src, srcXML, param)
-             res = PlexAPI.getDirectAudioPath(key, AuthToken)
-             res = PlexAPI.getURL(self.PMS_baseURL, self.path[srcXML], res)
-             dprint(__name__, 1, 'MusicURL - direct: {0}', res)
-             return res
+        if not Track:
+            # not a complete audio/track structure - take key directly and build direct-play path
+            key, leftover, dfltd = self.getKey(src, srcXML, param)
+            res = PlexAPI.getDirectAudioPath(key, AuthToken)
+            res = PlexAPI.getURL(self.PMS_baseURL, self.path[srcXML], res)
+            dprint(__name__, 1, 'MusicURL - direct: {0}', res)
+            return res
         
-         # complete track structure - request transcoding if needed
-         Media = Track.find('Media')
-         
-         # check "Media" element and get key
-         if Media!=None:
-             # transcoder action setting?
-             # transcoder bitrate setting [kbps] -  eg. 128, 256, 384, 512?
-             maxAudioBitrate = '384'
-             
-             audioATVNative = \
-                 Media.get('audioCodec','-') in ("mp3", "aac", "ac3", "drms", "alac", "aiff", "wav")
-             # check Media.get('container') as well - mp3, m4a, ...?
-             
-             dprint(__name__, 2, "audio: ATVNative - {0}", audioATVNative)
-             
-             if audioATVNative and\
-                int(Media.get('bitrate','0')) < int(maxAudioBitrate):
-                 # direct play
-                 res, leftover, dfltd = self.getKey(Media, srcXML, 'Part/key')
-                 res = PlexAPI.getDirectAudioPath(res, AuthToken)
-             else:
-                 # request transcoding
-                 res, leftover, dfltd = self.getKey(Track, srcXML, 'key')
-                 res = PlexAPI.getTranscodeAudioPath(res, AuthToken, self.options, maxAudioBitrate)
-         
-         else:
-             dprint(__name__, 0, "MEDIAPATH - element not found: {0}", param)
-             res = 'FILE_NOT_FOUND'  # not found?
-                            
+        # complete track structure - request transcoding if needed
+        Media = Track.find('Media')
+        
+        # check "Media" element and get key
+        if Media!=None:
+            # transcoder action setting?
+            # transcoder bitrate setting [kbps] -  eg. 128, 256, 384, 512?
+            maxAudioBitrate = '384'
+            
+            audioATVNative = \
+                Media.get('audioCodec','-') in ("mp3", "aac", "ac3", "drms", "alac", "aiff", "wav")
+            # check Media.get('container') as well - mp3, m4a, ...?
+            
+            dprint(__name__, 2, "audio: ATVNative - {0}", audioATVNative)
+            
+            if audioATVNative and\
+               int(Media.get('bitrate','0')) < int(maxAudioBitrate):
+                # direct play
+                res, leftover, dfltd = self.getKey(Media, srcXML, 'Part/key')
+                res = PlexAPI.getDirectAudioPath(res, AuthToken)
+            else:
+                # request transcoding
+                res, leftover, dfltd = self.getKey(Track, srcXML, 'key')
+                res = PlexAPI.getTranscodeAudioPath(res, AuthToken, self.options, maxAudioBitrate)
+        
+        else:
+            dprint(__name__, 0, "MEDIAPATH - element not found: {0}", param)
+            res = 'FILE_NOT_FOUND'  # not found?
+        
         res = PlexAPI.getURL(self.PMS_baseURL, self.path[srcXML], res)
-        
         dprint(__name__, 1, 'MusicURL: {0}', res)
         return res
     
