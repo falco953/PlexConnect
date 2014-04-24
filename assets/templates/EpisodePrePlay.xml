@@ -2,11 +2,23 @@
   <head>
     <script src="{{URL(:/js/utils.js)}}" />
     <script src="{{URL(:/js/selectAudioAndSubs.js)}}" />
+    <script src="{{URL(:/js/settings.js)}}" />
   </head>
 
   <body>
-    <itemDetail id="com.apple.trailer" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}&amp;PlexConnect=EpisodePrePlay')">
-      <title>{{VAL(Video/index)}}. {{VAL(Video/title)}}</title>
+    <itemDetailWithImageHeader id="com.sample.movie-grid" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}&amp;PlexConnect=EpisodePrePlay')">
+	  <styles>
+          <color name="titleColor">#ce7f1a</color>
+          <color name="metadataColor">#ffffff</color>
+        </styles>
+
+	   <header>
+	     <imageHeader>
+	       <image insets="{{VAL(^aTVScreenResolution:1:720=1039|1080=1019)}}, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(Video/art:::)}}&amp;gradient=tv&amp;hd={{VAL(^aTVScreenResolution)}}&amp;title={{VAL(Video/index)}}.+{{EVAL("{{VAL(Video/title)}}".replace(' ', '+'))}}</image>
+	     </imageHeader>
+	   </header>
+        
+    <title>{{VAL(Video/index)}}. {{VAL(Video/title)}}</title>
       <subtitle>{{VAL(Video/studio)}}</subtitle>
       <rating>{{contentRating(Video/contentRating)}}</rating>
       <summary>{{VAL(Video/summary)}}</summary>{{CUT($showsynopsis::Hide=CUT|Show=)}}
@@ -34,14 +46,9 @@
             <label>{{VAL(Video/Writer/tag)}}</label>
           </row>
           <row>
-            <label>{{VAL(Video/Media/videoResolution:Unknown:1080=1080p|720=720p|576=SD|480=SD|sd=SD)}} / {{VAL(Video/Media/audioCodec:Unknown:ac3=AC3|aac=AAC|mp3=MP3|dca=DTS|drms=DRMS)}} {{VAL(Video/Media/audioChannels:Unknown:2=Stereo|6=5.1|8=7.1)}} </label>
+            <label>{{VAL(Video/Media/videoResolution:Unknown:1080=1080p|720=720p|576=SD|480=SD|sd=SD)}}   {{VAL(Video/Media/audioCodec:Unknown:ac3=AC3|aac=AAC|mp3=MP3|dca=DTS|drms=DRMS)}} {{VAL(Video/Media/audioChannels:Unknown:2=Stereo|6=5.1|8=7.1)}} </label>
             <label>{{VAL(Video/Director[2]/tag)}}</label>
             <label>{{VAL(Video/Writer[2]/tag)}}</label>
-          </row>
-          <row>
-            <label>{{EVAL("{{VAL(Video/Media/container)}} / {{VAL(Video/Media/videoCodec)}}".upper())}}</label>
-            <label>{{VAL(Video/Director[3]/tag)}}</label>
-            <label>{{VAL(Video/Writer[3]/tag)}}</label>
           </row>
           <row>
             <starRating hasUserSetRating="true">
@@ -50,8 +57,8 @@
             <starRating>
               <percentage>{{EVAL({{VAL(Video/rating:0)}} * 10)}}</percentage>
             </starRating>{{CUT(Video/userRating::0=CUT)}}
-            <label>{{VAL(Video/Director[4]/tag)}}</label>
-            <label>{{VAL(Video/Writer[4]/tag)}}</label>
+            <label>{{VAL(Video/Director[3]/tag)}}</label>
+            <label>{{VAL(Video/Writer[3]/tag)}}</label>
           </row>
         </rows>
       </table>
@@ -102,6 +109,13 @@
                   <image>resource://Queue.png</image>
                   <focusedImage>resource://QueueFocused.png</focusedImage>
                 </actionButton>
+                <actionButton id="Settings" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=Settings')">
+                  <title>{{TEXT(Settings)}}</title>
+                  <image>resource://WishList.png</image>
+                  <focusedImage>resource://WishListFocused.png</focusedImage>
+                  <!--<badge></badge>-->
+                </actionButton>
+
               </items>
             </shelfSection>
           </sections>
@@ -134,6 +148,6 @@
         </shelf>
       </bottomShelf>
 
-		</itemDetail>
+		</itemDetailWithImageHeader>
 	</body>
 </atv>
