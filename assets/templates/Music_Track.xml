@@ -11,37 +11,44 @@
     </dict>
     <key>items</key>
     <array>
-      
-      <!-- library -->
       <dict>
-      {{CUT(content::=CUT)}}
         <key>type</key>
         <string>podcast</string>
         <key>title</key>
-        <string>{{VAL(parentTitle)}}</string>
+        <!-- library -->
+        <string>{{VAL(parentTitle)}}</string>{{CUT(content::=CUT)}}
+        <!-- channel: iTunes (old style plugin) -->
+        <string>{{VAL(title2)}}</string>{{CUT(@main/content:CUT:songs=|songs =CUT)}}
         <key>items</key>
+        {{VAR(img:thumb)}}
         <array>
           <dict>
           {{COPY(Track)}}
             <key>type</key>
             <string>podcast-episode</string>
             <key>title</key>
-            <string>{{VAL(title)}}</string>
+            <!-- library -->
+            <string>{{VAL(title)}}</string>{{CUT(@main/content::=CUT)}}
+            <!-- channel: iTunes (old style plugin) -->
+            <string>{{VAL(track)}}</string>{{CUT(@main/content:CUT:songs=|songs =CUT)}}
             <key>item-id</key>
-            <integer>{{VAL(ratingKey:0)}}</integer>
-            <key>artwork-urls</key>{{CUT(@main/thumb:CUT:=CUT| =)}}
-            <array>{{CUT(@main/thumb:CUT:=CUT| =)}}
+            <integer>{{VAL(index:1)}}</integer>
+            <key>artwork-urls</key>{{CUT(#img:CUT:=CUT| =)}}
+            <array>
               <dict>
                 <key>url</key>
-                <string>{{IMAGEURL(@main/thumb::768)}}</string>
+                <string>{{VAL(%baseURL)}}{{VAL(#img)}}</string>
               </dict>
-            </array>
+            </array>{{CUT(#img:CUT:=CUT| =)}}
             <key>store-offers</key>
             <dict>
               <key>standard-audio</key>
               <dict>
                 <key>asset-url</key>
-                <string>{{MUSICURL()}}</string>
+                <!-- library -->
+                <string>{{MUSICURL(Media/Part/key)}}</string>{{CUT(@main/content::=CUT)}}
+                <!-- channel: iTunes (old style plugin) -->
+                <string>{{MUSICURL(key)}}</string>{{CUT(@main/content:CUT:songs=|songs =CUT)}}
               </dict>
             </dict>
             <key>description</key>
@@ -50,46 +57,6 @@
         
         </array>
       </dict>
-      
-      <!-- audio V1 - channels (old style plugin, eg iTunes) -->
-      <dict>
-      {{CUT(content:CUT:songs=|songs =CUT)}}
-        <key>type</key>
-        <string>podcast</string>
-        <key>title</key>
-        <string>{{VAL(title2)}}</string>
-        <key>items</key>
-        <array>
-          <dict>
-          {{COPY(Track)}}
-            <key>type</key>
-            <string>podcast-episode</string>
-            <key>title</key>
-            <string>{{VAL(track)}}</string>
-            <key>item-id</key>
-            <integer>{{VAL(ratingKey:1)}}</integer>
-            <key>artwork-urls</key>{{CUT(thumb:CUT:=CUT| =)}}
-            <array>{{CUT(thumb:CUT:=CUT| =)}}
-              <dict>
-                <key>url</key>
-                <string>{{IMAGEURL(thumb::768)}}</string>
-              </dict>
-            </array>
-            <key>store-offers</key>
-            <dict>
-              <key>standard-audio</key>
-              <dict>
-                <key>asset-url</key>
-                <string>{{MUSICURL(key)}}</string>
-              </dict>
-            </dict>
-            <key>description</key>
-            <string></string>
-          </dict>
-        
-        </array>
-      </dict>
-    
     </array>
   </dict>
 </plist>

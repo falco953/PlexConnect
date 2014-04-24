@@ -15,13 +15,13 @@
 
       <header>
         <imageHeader>
-          <image insets="900, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=tvseason&amp;hd=1080</image>
+          <image insets="880, 0, 0, 200" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=tvseason&amp;hd=1080&amp;title={{EVAL("{{VAL(#title1)}}".replace(' ', '+'))}}</image>
         </imageHeader>
       </header>
       <menu>
         <sections>
           <menuSection>
-            <items>
+            <items>    
                 <oneLineMenuItem id="none">
                 <label>{{VAL(#title2)}}</label>
                 <preview>
@@ -30,7 +30,7 @@
                     <summary>{{VAL(summary)}}</summary>{{CUT($showsynopsis::Hide=CUT|Show=)}}
                     <summary>{{VAL(summary)}}</summary>{{CUT(viewCount:CUT:=)}}{{CUT($showsynopsis::Show=CUT|Hide=)}}
                     <summary>{{TEXT(Synopsis hidden.)}}</summary>{{CUT(viewCount)}}{{CUT($showsynopsis::Show=CUT|Hide=)}}
-                    <image>{{IMAGEURL(thumb::768)}}</image>
+                    <image>{{IMAGEURL(thumb::368)}}</image>
                   </keyedPreview>
                 </preview>
               </oneLineMenuItem>
@@ -59,10 +59,9 @@
                     <rating>{{VAL(#contentRating)}}</rating>
                     <image>{{IMAGEURL(thumb::800)}}</image>
                     <metadata>
-                      <label>{{VAL(#title1)}}</label>
                       <label>Aired: {{VAL(originallyAvailableAt)}}</label>
                       <label>Studio: {{VAL(#studio)}}</label>
-                      <label>Runtime: {{getDurationString(duration)}}</label>
+                      <label>Runtime: {{getDurationString(duration)}}</label>   
                       <label>Quality: {{VAL(Media/videoResolution:Unknown:1080=1080p|720=720p|576=576 SD|480=480 SD|sd=SD)}}   {{VAL(Media/audioCodec:Unknown:ac3=AC3|aac=AAC|mp3=MP3|dca=DTS|drms=DRMS)}} {{VAL(Media/audioChannels:Unknown:2=Stereo 2.0|6=5.1|8=7.1)}} </label>
                       <starRating hasUserSetRating="true">
                         <percentage>{{EVAL({{VAL(userRating:0)}} * 10)}}</percentage>

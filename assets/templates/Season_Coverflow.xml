@@ -7,11 +7,10 @@
     <scroller id="com.sample.menu-items-with-sections" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
         <header>
         <imageHeader>
-          <image insets="650, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=seasons&amp;hd=1080&amp;banner={{IMAGEURL(banner:::)}}</image>
+          <image insets="650, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=seasons&amp;hd=1080</image>
         </imageHeader><!--&amp;title={{EVAL("{{VAL(title2)}}".replace(' ', '+'))}}-->
       </header>
       <items>
-
 
         <shelf id="coverflow" columnCount="{{EVAL(min({{VAL(size:0)}},5))}}">
           <sections>
