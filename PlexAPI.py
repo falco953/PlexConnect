@@ -710,7 +710,7 @@ def getTranscodeImagePath(key, AuthToken, path, width, height):
     
     # This is bogus (note the extra path component) but ATV is stupid when it comes to caching images, it doesn't use querystrings.
     # Fortunately PMS is lenient...
-    transcodePath = '/photo/:/transcode/' + quote_plus(path)
+    transcodePath = '/photo/:/transcode/' +str(width)+'x'+str(height)+ '/' + quote_plus(path)
     
     args = dict()
     args['width'] = width
@@ -743,6 +743,36 @@ def getDirectImagePath(path, AuthToken):
             path = path + '&' + urlencode(xargs)
     
     return path
+
+
+
+"""
+Transcode Audio support
+
+parameters:
+    path
+    AuthToken
+    options - dict() of PlexConnect-options as received from aTV
+    maxAudioBitrate - [kbps]
+result:
+    final path to pull in PMS transcoder
+"""
+def getTranscodeAudioPath(path, AuthToken, options, maxAudioBitrate):
+    UDID = options['PlexConnectUDID']
+    
+    transcodePath = '/music/:/transcode/universal/start.mp3?'
+    
+    args = dict()
+    args['path'] = path
+    args['session'] = UDID
+    args['protocol'] = 'http'
+    args['maxAudioBitrate'] = maxAudioBitrate
+    
+    xargs = getXArgsDeviceInfo(options)
+    if not AuthToken=='':
+        xargs['X-Plex-Token'] = AuthToken
+    
+    return transcodePath + urlencode(args) + '&' + urlencode(xargs)
 
 
 
