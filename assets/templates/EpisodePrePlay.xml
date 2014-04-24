@@ -23,7 +23,6 @@
       <summary>{{VAL(Video/summary)}}</summary>{{CUT(Video/viewCount:CUT:=)}}{{CUT($showsynopsis::Show=CUT|Hide=)}}
       <summary>{{TEXT(Synopsis hidden.)}}</summary>{{CUT(Video/viewCount)}}{{CUT($showsynopsis::Show=CUT|Hide=)}}
       <image style="squarePoster">{{IMAGEURL(Video/thumb::384)}}</image>
-      <footnote>© The Studio, Inc.  All Rights Reserved.</footnote>
 
       <table>
         <columnDefinitions>
