@@ -71,13 +71,22 @@
               </horizontalDivider>
             </header>
             <items>
+<<<<<<< HEAD
               <oneLineMenuItem id="LibraryView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsLibrary')">
                 <label>{{TEXT(Library Options)}}</label>
+=======
+              <oneLineMenuItem id="Top Level" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsTopLevel')">
+                <label>{{TEXT(Top Level Options)}}</label>
+>>>>>>> upstream/master
                 <accessories>
                   <arrow/>
                 </accessories>
               </oneLineMenuItem>
+<<<<<<< HEAD
                 <oneLineMenuItem id="MovieView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsMovies')">
+=======
+              <oneLineMenuItem id="MovieView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsMovies')">
+>>>>>>> upstream/master
                 <label>{{TEXT(Movie Options)}}</label>
                 <accessories>
                   <arrow/>
@@ -91,12 +100,6 @@
               </oneLineMenuItem>
               <oneLineMenuItem id="HomevideoView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsHomeVideos')">
                 <label>{{TEXT(Home Video Options)}}</label>
-                <accessories>
-                  <arrow/>
-                </accessories>
-              </oneLineMenuItem>
-              <oneLineMenuItem id="Channels" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsChannels')">
-                <label>{{TEXT(Channel Options)}}</label>
                 <accessories>
                   <arrow/>
                 </accessories>
@@ -132,6 +135,10 @@
               <oneLineMenuItem id="RemoteBitrate" onSelect="toggleSettings('RemoteBitrate', 'Settings')">
                 <label>{{TEXT(Remote Bitrate)}}</label>
                 <rightLabel>{{SETTING(remotebitrate)}}</rightLabel>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="PhotoTranscoderAction" onSelect="toggleSettings('PhotoTranscoderAction', 'Settings')">
+                <label>{{TEXT(Photo Transcoder Action)}}</label>
+                <rightLabel>{{SETTING(phototranscoderaction)}}</rightLabel>
               </oneLineMenuItem>
               <oneLineMenuItem id="SubtitleRenderer" onSelect="toggleSettings('SubtitleRenderer', 'Settings')">
                 <label>{{TEXT(Subtitle Renderer)}}</label>

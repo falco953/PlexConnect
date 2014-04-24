@@ -14,7 +14,11 @@
         <navigationItem id="Channels">
           <title>{{TEXT(Channels)}}</title>
           <url>{{URL(:/PMS(owned)/channels/all)}}</url>
+<<<<<<< HEAD
         </navigationItem>{{CUT($library_channels:CUT:checked=CUT|unchecked=)}}
+=======
+        </navigationItem>
+>>>>>>> upstream/master
         <navigationItem id="SharedLibraries">
           <title>{{TEXT(Shared Libraries)}}</title>
           <url>{{URL(:/PMS(shared)/library/sections)}}</url>
