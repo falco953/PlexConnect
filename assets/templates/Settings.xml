@@ -71,6 +71,12 @@
               </horizontalDivider>
             </header>
             <items>
+                <oneLineMenuItem id="Top Level" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsTopLevel')">
+                 <label>{{TEXT(Top Level Options)}}</label>
+                 <accessories>
+                   <arrow/>
+                 </accessories>
+               </oneLineMenuItem>
               <oneLineMenuItem id="LibraryView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsLibrary')">
                 <label>{{TEXT(Library Options)}}</label>
                 <accessories>
@@ -91,12 +97,6 @@
               </oneLineMenuItem>
               <oneLineMenuItem id="HomevideoView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsHomeVideos')">
                 <label>{{TEXT(Home Video Options)}}</label>
-                <accessories>
-                  <arrow/>
-                </accessories>
-              </oneLineMenuItem>
-              <oneLineMenuItem id="Channels" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsChannels')">
-                <label>{{TEXT(Channel Options)}}</label>
                 <accessories>
                   <arrow/>
                 </accessories>
@@ -133,6 +133,10 @@
                 <label>{{TEXT(Remote Bitrate)}}</label>
                 <rightLabel>{{SETTING(remotebitrate)}}</rightLabel>
               </oneLineMenuItem>
+                <oneLineMenuItem id="PhotoTranscoderAction" onSelect="toggleSettings('PhotoTranscoderAction', 'Settings')">
+                 <label>{{TEXT(Photo Transcoder Action)}}</label>
+                 <rightLabel>{{SETTING(phototranscoderaction)}}</rightLabel>
+               </oneLineMenuItem>
               <oneLineMenuItem id="SubtitleRenderer" onSelect="toggleSettings('SubtitleRenderer', 'Settings')">
                 <label>{{TEXT(Subtitle Renderer)}}</label>
                 <rightLabel>{{SETTING(subtitlerenderer)}}</rightLabel>

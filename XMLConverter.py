@@ -348,9 +348,8 @@ def XML_PMS2aTV(PMS_address, path, options):
         XMLtemplate = 'Settings_HomeVideos.xml'
         path = ''  # clear path - we don't need PMS-XML
 
-    elif cmd=='SettingsChannels':
-        XMLtemplate = 'Settings_Channels.xml'
-        path = ''  # clear path - we don't need PMS-XML
+    elif cmd=='SettingsTopLevel':
+        XMLtemplate = 'Settings_TopLevel.xml'
         
     elif cmd.startswith('SettingsToggle:'):
         opt = cmd[len('SettingsToggle:'):]  # cut command:
@@ -489,9 +488,15 @@ def XML_PMS2aTV(PMS_address, path, options):
             # TV Episode view
             XMLtemplate = 'Episode.xml'
     
-    elif PMSroot.get('viewGroup','')=='photo':
-        # Photo listing
-        XMLtemplate = 'Photo.xml'
+      elif PMSroot.get('viewGroup','')=='photo' or \
+        path.startswith('/photos') or \
+       PMSroot.find('Photo')!=None:
+        if PMSroot.find('Directory')==None:
+            # Photos only - directly show
+             XMLtemplate = 'Photo_Browser.xml'
+         else:
+             # Photo listing / directory
+             XMLtemplate = 'Photo_Directories.xml'
     
     else:
         XMLtemplate = 'Directory.xml'
@@ -770,7 +775,7 @@ class CCommandHelper():
         el, srcXML, tag = self.getBase(src, srcXML, tag)
         
         # walk the path if neccessary
-        while True:
+        while len(tag)>0:
             parts = tag.split('/',1)
             el = el.find(parts[0])
             if not '/' in tag or el==None:
@@ -977,6 +982,7 @@ class CCommandCollection(CCommandHelper):
         if height=='':
             height = width
         
+        PMS_uuid = self.PMS_uuid
         PMS_baseURL = self.PMS_baseURL
         cmd_start = key.find('PMS(')
         cmd_end = key.find(')', cmd_start)
@@ -986,12 +992,26 @@ class CCommandCollection(CCommandHelper):
             PMS_baseURL = PlexAPI.getPMSProperty(self.ATV_udid, PMS_uuid, 'baseURL')
             key = key[cmd_end+1:]
         
-        AuthToken = PlexAPI.getPMSProperty(self.ATV_udid, self.PMS_uuid, 'accesstoken')
+        AuthToken = PlexAPI.getPMSProperty(self.ATV_udid, PMS_uuid, 'accesstoken')
         
-        if width=='':
+         # transcoder action
+         transcoderAction = g_ATVSettings.getSetting(self.ATV_udid, 'phototranscoderaction')
+         
+         # aTV native filetypes
+         parts = key.rsplit('.',1)
+         photoATVNative = parts[-1].lower() in ['jpg','jpeg','tif','tiff','gif','png']
+         dprint(__name__, 2, "photo: ATVNative - {0}", photoATVNative)
+         
+         if width=='' and \
+            transcoderAction=='Auto' and \
+            photoATVNative:
             # direct play
             res = PlexAPI.getDirectImagePath(key, AuthToken)
         else:
+            if width=='':
+                 width = 1920  # max for HDTV. Relate to aTV version? Increase for KenBurns effect?
+             if height=='':
+                 height = 1080  # as above
             # request transcoding
             res = PlexAPI.getTranscodeImagePath(key, AuthToken, self.path[srcXML], width, height)
         
@@ -1006,19 +1026,48 @@ class CCommandCollection(CCommandHelper):
         return res
     
     def ATTRIB_MUSICURL(self, src, srcXML, param):
-        key, leftover, dfltd = self.getKey(src, srcXML, param)
+        Track, leftover = self.getElement(src, srcXML, param)
         
         AuthToken = PlexAPI.getPMSProperty(self.ATV_udid, self.PMS_uuid, 'accesstoken')
         
-        # direct play
-        res = PlexAPI.getDirectAudioPath(key, AuthToken)
+         if not Track:
+             # not a complete audio/track structure - take key directly and build direct-play path
+             key, leftover, dfltd = self.getKey(src, srcXML, param)
+             res = PlexAPI.getDirectAudioPath(key, AuthToken)
+             res = PlexAPI.getURL(self.PMS_baseURL, self.path[srcXML], res)
+             dprint(__name__, 1, 'MusicURL - direct: {0}', res)
+             return res
         
-        if res.startswith('/'):  # internal full path.
-            res = self.PMS_baseURL + res
-        elif res.startswith('http://') or res.startswith('https://'):  # external address
-            pass
-        else:  # internal path, add-on
-            res = self.PMS_baseURL + self.path[srcXML] + '/' + res
+         # complete track structure - request transcoding if needed
+         Media = Track.find('Media')
+         
+         # check "Media" element and get key
+         if Media!=None:
+             # transcoder action setting?
+             # transcoder bitrate setting [kbps] -  eg. 128, 256, 384, 512?
+             maxAudioBitrate = '384'
+             
+             audioATVNative = \
+                 Media.get('audioCodec','-') in ("mp3", "aac", "ac3", "drms", "alac", "aiff", "wav")
+             # check Media.get('container') as well - mp3, m4a, ...?
+             
+             dprint(__name__, 2, "audio: ATVNative - {0}", audioATVNative)
+             
+             if audioATVNative and\
+                int(Media.get('bitrate','0')) < int(maxAudioBitrate):
+                 # direct play
+                 res, leftover, dfltd = self.getKey(Media, srcXML, 'Part/key')
+                 res = PlexAPI.getDirectAudioPath(res, AuthToken)
+             else:
+                 # request transcoding
+                 res, leftover, dfltd = self.getKey(Track, srcXML, 'key')
+                 res = PlexAPI.getTranscodeAudioPath(res, AuthToken, self.options, maxAudioBitrate)
+         
+         else:
+             dprint(__name__, 0, "MEDIAPATH - element not found: {0}", param)
+             res = 'FILE_NOT_FOUND'  # not found?
+                            
+        res = PlexAPI.getURL(self.PMS_baseURL, self.path[srcXML], res)
         
         dprint(__name__, 1, 'MusicURL: {0}', res)
         return res
@@ -1058,7 +1107,7 @@ class CCommandCollection(CCommandHelper):
         
         return res
     
-    def ATTRIB_MEDIAURL(self, src, srcXML, param):
+    def ATTRIB_VIDEOURL(self, src, srcXML, param):
         Video, leftover = self.getElement(src, srcXML, param)
         
         AuthToken = PlexAPI.getPMSProperty(self.ATV_udid, self.PMS_uuid, 'accesstoken')
@@ -1186,7 +1235,7 @@ class CCommandCollection(CCommandHelper):
         else:  # internal path, add-on
             res = self.PMS_baseURL + self.path[srcXML] + res
         
-        dprint(__name__, 1, 'MediaURL: {0}', res)
+        dprint(__name__, 1, 'VideoURL: {0}', res)
         return res
     
     def ATTRIB_episodestring(self, src, srcXML, param):
