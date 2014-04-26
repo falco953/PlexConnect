@@ -15,7 +15,7 @@
 
       <header>
         <imageHeader>
-          <image insets="880, 0, 0, 200" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=tvseason&amp;hd=1080&amp;title={{EVAL("{{VAL(#title1)}}".replace(' ', '+'))}}</image>
+          <image insets="880, 0, 0, 200" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=tvseason&amp;hd=1080&amp;title={{EVAL(quote_plus("{{VAL(#title1)}}".replace(' ', ' ')))}}</image>
         </imageHeader>
       </header>
       <menu>
