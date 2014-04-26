@@ -22,7 +22,7 @@
       <summary>{{VAL(Video/summary)}}</summary>{{CUT($showsynopsis::Hide=CUT|Show=)}}
       <summary>{{VAL(Video/summary)}}</summary>{{CUT(Video/viewCount:CUT:=)}}{{CUT($showsynopsis::Show=CUT|Hide=)}}
       <summary>{{TEXT(Synopsis hidden.)}}</summary>{{CUT(Video/viewCount)}}{{CUT($showsynopsis::Show=CUT|Hide=)}}
-      <image style="squarePoster">{{IMAGEURL(Video/thumb::384)}}</image>
+      <image style="moviePoster">{{IMAGEURL(Video/parentThumb::768)}}</image>
 
       <table>
         <columnDefinitions>
