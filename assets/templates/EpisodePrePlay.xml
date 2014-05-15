@@ -14,7 +14,7 @@
 
 	   <header>
 	     <imageHeader>
-	       <image insets="{{VAL(^aTVScreenResolution:1:720=820|1080=690)}}, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(Video/art:::)}}&amp;hd={{VAL(^aTVScreenResolution)}}&amp;title={{VAL(Video/index)}}.+{{EVAL(quote_plus("{{VAL(Video/title)}}".replace(' ', ' ')))}}</image>
+	       <image insets="{{VAL(^aTVScreenResolution:1:720=880|1080=720)}}, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(Video/art:::)}}&amp;hd={{VAL(^aTVScreenResolution)}}&amp;title={{VAL(Video/index)}}.+{{EVAL(quote_plus("{{VAL(Video/title)}}".replace(' ', ' ')))}}</image>
 	     </imageHeader>
 	   </header>
         

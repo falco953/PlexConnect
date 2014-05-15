@@ -58,20 +58,20 @@ if (isset($image) ) {
         $white = imagecolorallocate($sized_image, 255, 255, 255);
 
         $font = 'HelveticaBold';
-        $h = $destHeight / 7.2;
+        $h = $destHeight / 7.0;
         $w = $destWidth / 3.66;
         $fs = $destHeight / 36;
         imagettftext($sized_image, $fs, 0, $w, $h, $white, $font, $text);
         
     } else if ($gradient == 'tvseason') {
-        $font = 'HelveticaNeue';
+        /*$font = 'HelveticaNeue';
         $h = $destHeight / 3.4;
         $w = $destWidth / 28;
         $shadowh = $h + 2;
         $shadoww = $w + 2;
         $fs = $destHeight / 15;
         imagettftext($sized_image, $fs, 0, $shadoww, $shadowh, $black, $font, $text);
-        imagettftext($sized_image, $fs, 0, $w, $h, $white, $font, $text);
+        imagettftext($sized_image, $fs, 0, $w, $h, $white, $font, $text);*/
         
     } else if ($gradient == 'seasons') {
         //imagefilter($sized_image, IMG_FILTER_GAUSSIAN_BLUR);
@@ -90,7 +90,7 @@ if (isset($image) ) {
     } else {
         imagecopy($sized_image, $line_image, 0, 0, 0, 0, $destWidth, $destHeight);
         $font = 'HelveticaNeue';
-        $h = $destHeight / 2.25;
+        $h = $destHeight / 2.75;
         $w = $destWidth / 3.66;
         $shadowh = $h + 3;
         $shadoww = $w + 3;
