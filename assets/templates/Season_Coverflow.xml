@@ -2,40 +2,41 @@
   <head>
     <script src="{{URL(:/js/utils.js)}}" />
   </head>
-
+  
   <body>
     <scroller id="com.sample.menu-items-with-sections" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
-        <header>
+      <header>
+    <!--Fullscreen-->
         <imageHeader>
-         <image insets="650, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=seasons&amp;hd=1080</image>
-         <!--<image insets="650, 0, 0, 0" required="true">{{URL(:/fanart/cache/{{LFBG("seasons","{{EVAL(quote_plus(("{{VAL(title2)}}")))}}","1080","{{IMAGEURL(art:::)}}","{{IMAGEURL(banner:::)}}")}}.png)}}</image>-->
+            <!--<image insets="650, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=seasons&amp;hd=1080</image>-->
+           <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=580|1080=900)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{IMAGEURL(art:::)}}","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","24","63E4CF","FFFFFF","center","bottom","","180","","20","List")}})}}</image>
 
-        </imageHeader><!--&amp;title={{EVAL("{{VAL(title2)}}".replace(' ', '+'))}}-->
+        </imageHeader>
+
       </header>
       <items>
-
-        <shelf id="coverflow" columnCount="{{EVAL(min({{VAL(size:0)}},5))}}">
+        <shelf id="coverflow" columnCount="{{EVAL(min({{VAL(size:0)}},4))}}">
           <sections>
             <shelfSection>
               <items>
-                <goldenPoster id="{{VAL(key)}}" alwaysShowTitles="{{VAL($showtitles_tvshows::Highlighted Only=false|Show All=true)}}"
+                <goldenPoster id="{{VAL(key)}}" featured="true" alwaysShowTitles="{{VAL($showtitles_tvshows::Highlighted Only=false|Show All=true)}}"
                               onPlay="atv.loadURL('{{URL(key)}}')"
                               onSelect="atv.loadURL('{{URL(key)}}')"
                               onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenu')">
                   {{COPY(Directory)}}
                   <title>{{VAL(title)}}</title>
-                  <image>{{IMAGEURL(thumb::384)}}</image>
+                  <image>{{IMAGEURL(thumb::768)}}</image>
                   <defaultImage>resource://Poster.png</defaultImage>
-                </goldenPoster>{{CUT(Directory/title:CUT:=)}}
-            
-            <!--    <oneLineMenuItem id="none">
+                </goldenPoster><!--{{CUT(Directory/title:CUT:=|All episodes=CUT)}}-->
+                  
+                <!--<oneLineMenuItem id="none">
                   <label>No Seasons</label>
                 </oneLineMenuItem>{{CUT(Directory/title::=CUT)}}-->
               </items>
             </shelfSection>
           </sections>
         </shelf>
-
+       
       </items>
     </scroller>
   </body>

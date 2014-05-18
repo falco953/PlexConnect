@@ -14,9 +14,9 @@
 
     <scroller id="com.sample.movie-showcase-grid">
       <header>
-        <simpleHeader>
-          <title>{{VAL(title1)}}</title>
-        </simpleHeader>
+        <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=800)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","110","","10","Grid")}})}}</image>
+        </imageHeader>
       </header>
       
       <items>

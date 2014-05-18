@@ -15,7 +15,8 @@
         </styles>
 	   <header>
 	     <imageHeader>
-	       <image insets="{{VAL(^aTVScreenResolution:1:720=860|1080=720)}}, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(Video/art:::)}}&amp;hd={{VAL(^aTVScreenResolution)}}&amp;title={{EVAL(quote_plus("{{VAL(Video/title)}}".replace(' ', '')))}}</image>
+	       <!--<image insets="{{VAL(^aTVScreenResolution:1:720=860|1080=720)}}, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(Video/art:::)}}&amp;hd={{VAL(^aTVScreenResolution)}}&amp;title={{EVAL(quote_plus("{{VAL(Video/title)}}".replace(' ', '')))}}</image>-->
+	      <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=460|1080=690)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(Video/title)}}"))}}","{{EVAL(quote_plus("({{VAL(Video/year)}}) {{VAL(Video/studio)}}"))}}","{{IMAGEURL(Video/art:::)}}","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","40","0","FFFFFF","FFFFFF","left","top","350","280","","","MoviePrePlay")}})}}</image>
 	     </imageHeader>
 	   </header>
       <rating>{{VAL(Video/studio)}}</rating>
@@ -97,6 +98,13 @@
                   <focusedImage>resource://PreviewFocused.png</focusedImage>
                   <!--<badge></badge>-->
                 </actionButton>
+                <actionButton id="scrobbleMenu" 
+                				onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenuVideo')">
+                  <title>{{TEXT(Watch Status)}}</title>
+                  <image>resource://More.png</image>
+                  <focusedImage>resource://MoreFocused.png</focusedImage>
+                  <!--<badge></badge>-->
+                </actionButton> 
                 <actionButton id="selectAudioAndSubs"
                                onHoldSelect="selectAudioAndSubs('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(Video/Media/Part/id)}}')"
                               onSelect="selectAudioAndSubs('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(Video/Media/Part/id)}}')"

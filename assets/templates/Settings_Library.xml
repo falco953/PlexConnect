@@ -6,16 +6,18 @@
   </head>
 
   <body>
-    <listWithPreview id="SettingsPage_Library">
+    <itemCollectionWithImageHeader id="SettingsPage_Library">
       <header>
-        <simpleHeader>
-          <title>{{TEXT(Settings)}}</title>
-        </simpleHeader>
+        <imageHeader>
+          <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=640|1080=960)}}, 0" required="true">
+           {{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{TEXT(Settings)}}"))}}","","backgrounds/settings.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","","9A9A9A","","right","top","300","90","","","List")}})}}
+          </image>
+        </imageHeader>
       </header>
       <preview>
         <keyedPreview>
           <title>&#x00AD;<!--soft-hyphen--></title>
-          <summary/>
+          <summary>PlexConnect is a simple way to bring the Plex Client to the Apple TV.</summary>
           <metadataKeys>
             <label>{{TEXT(Version)}}</label>
             <label>{{TEXT(Authors)}}</label>
@@ -30,7 +32,7 @@
             <label>https://github.com/ibaa/plexconnect</label>
             <label>http://forums.plexapp.com/...plexconnect</label>
           </metadataValues>
-          <image>{{URL(:/thumbnails/PlexConnectLogo.jpg)}}</image>
+          <image>{{URL(:/thumbnails/PlexConnectLogo.png)}}</image>
         </keyedPreview>
       </preview>
 
@@ -96,6 +98,6 @@
           </menuSection>
         </sections>
       </menu>
-    </listWithPreview>
+    </itemCollectionWithImageHeader>
   </body>
 </atv>

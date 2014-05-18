@@ -4,11 +4,11 @@
   </head>
 
   <body>
-    <listWithPreview id="com.sample.menu-items-with-sections" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
+    <itemCollectionWithImageHeader id="com.sample.menu-items-with-sections" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
       <header>
-        <simpleHeader>
-          <title>{{VAL(title2)}}</title>
-        </simpleHeader>
+       <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","","backgrounds/show.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","500","100","","10","Grid")}})}}</image>
+        </imageHeader>
       </header>
       <menu>
         <sections>
@@ -37,6 +37,6 @@
           </menuSection>
         </sections>
       </menu>
-    </listWithPreview>
+    </itemCollectionWithImageHeader>
   </body>
 </atv>

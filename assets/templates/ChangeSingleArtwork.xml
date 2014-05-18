@@ -6,10 +6,9 @@
   <body>
     <scroller id="single_artwork_select">
       <header>
-        <simpleHeader>
-          <title>{{VAL(title2)}}</title>
-          <subtitle>{{TEXT(Select Artwork)}}</subtitle>
-        </simpleHeader>
+        <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=765)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{VAL(title2)}}","{{TEXT(Select Artwork)}}","backgrounds/blank.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","110","","","List")}})}}</image>
+        </imageHeader>
       </header>
      
       <items>
@@ -23,7 +22,7 @@
           <sections>
             <shelfSection>
               <items>
-                <goldenPoster related="true" id="{{VAL(key)}}" alwaysShowTitles="true"
+                <goldenPoster related="true" id="{{VAL(key)}}" alwaysShowTitles="true" featured="true"
                               onSelect="changeArtwork('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(#key)}}', '{{VAL(key)}}', '');atv.unloadPage();">
                   {{COPY(@posters/Photo)}}
                   <title>{{VAL(selected::0=|1=Selected)}}</title>

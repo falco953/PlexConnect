@@ -4,11 +4,11 @@
   </head>
 
 	<body>
-    <listWithPreview id="com.sample.menu-items-with-sections">
+    <itemCollectionWithImageHeader id="com.sample.menu-items-with-sections">
       <header>
-        <simpleHeader>
-          <title>{{TEXT(More...)}}</title>
-        </simpleHeader>
+        <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=940)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{TEXT(More...)}}","","backgrounds/photo.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","right","top","420","110","","10","Grid")}})}}</image>
+        </imageHeader>
       </header>
       <menu>
         <sections>
@@ -60,6 +60,6 @@
           </menuSection>
         </sections>
       </menu>
-    </listWithPreview>
+    </itemCollectionWithImageHeader>
   </body>
 </atv>

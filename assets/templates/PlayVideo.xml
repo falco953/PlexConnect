@@ -6,7 +6,7 @@
         <title>{{VAL(Video/title)}}</title>
         <description>{{VAL(Video/summary)}}</description>
         <bookmarkTime>{{EVAL({{VAL(Video/viewOffset:0)}} / 1000)}}</bookmarkTime>
-        <image>{{IMAGEURL(Video/thumb::384)}}</image>
+        <image>{{IMAGEURL({{VAL(Video/type::movie=Video/thumb|episode=Video/grandparentThumb)}}::384)}}</image>
         
         <myMetadata>
             <!-- PMS, OSD settings, ... -->
@@ -16,7 +16,10 @@
             <key>{{VAL(Video/key)}}</key>
             <ratingKey>{{VAL(Video/ratingKey)}}</ratingKey>
             <duration>{{VAL(Video/duration)}}</duration>
-            
+            <videoSubtitle>{{VAL(Video/type::movie={{VAL(Video/title)}}|episode={{VAL(Video/title)}})}}</videoSubtitle>
+            <videoTitle>{{VAL(Video/type::movie={{VAL(Video/year)}}|episode={{VAL(Video/grandparentTitle)}})}}</videoTitle>
+            <poster>{{IMAGEURL({{VAL(Video/type::movie=Video/thumb|episode=Video/parentThumb)}}::384)}}</poster>
+            <showInfos>{{VAL($showplayinfos)}}</showInfos>
             <showClock>{{VAL($showplayerclock)}}</showClock>
             <timeFormat>{{VAL($timeformat)}}</timeFormat>
             <clockPosition>{{VAL($clockposition)}}</clockPosition>

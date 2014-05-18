@@ -15,7 +15,7 @@ http://trailers.apple.com/appletv/us/nav.xml
 ->browse:       http://trailers.apple.com/appletv/us/browse.xml
 """
 
-
+import re
 import os
 import sys
 import traceback
@@ -307,7 +307,7 @@ def XML_PMS2aTV(PMS_address, path, options):
         XMLtemplate = 'MovieSecondary.xml'
     
     elif cmd == 'AllShows':
-        XMLtemplate = 'Show_'+g_ATVSettings.getSetting(options['PlexConnectUDID'], 'showview')+'.xml'  
+        XMLtemplate = 'Show_'+g_ATVSettings.getSetting(options['PlexConnectUDID'], 'showview').replace(' ','')+'.xml'  
           
     elif cmd == 'TVSecondary':
         XMLtemplate = 'TVSecondary.xml'
@@ -890,6 +890,85 @@ class CCommandCollection(CCommandHelper):
         elem.remove(child)
         return True  # tree modified, nodes updated: restart from 1st elem
     
+    def TREE_PAGEDCOPY(self, elem, child, src, srcXML, param):
+    
+        # is MULTICOPY?
+        tags=param.split(',')
+        tag, param_enbl = self.getParam(src, tags[0])
+        src, srcXML, tag = self.getBase(src, srcXML, tag)
+        columncount=tags[1]
+        rowcount=tags[2]
+        
+        # walk the src path if neccessary
+        while '/' in tag and src!=None:
+            parts = tag.split('/',1)
+            src = src.find(parts[0])
+            tag = parts[1]
+        
+        # find index of child in elem - to keep consistent order
+        for ix, el in enumerate(list(elem)):
+            if el==child:
+                break
+
+        #get all requested tags    
+        itemrange = src.findall(tag)
+        # is MULTICOPY?
+        for i in range(len(tags)):
+          if i > 2:
+            itemrange=itemrange+src.findall(tags[i])  
+
+        maxicons = int(columncount) * int(rowcount)
+        pagecount = 0 
+        iconcount = 0
+
+        if len(tags) > 3:
+          itemrange = sorted(itemrange, key=lambda x: x.attrib.get('addedAt'), reverse=True)        
+        
+        for elemSRC in itemrange:
+
+            key = 'COPY'
+            if param_enbl!='':
+                key, leftover, dfltd = self.getKey(elemSRC, srcXML, param_enbl)
+                conv, leftover = self.getConversion(elemSRC, leftover)
+                if not dfltd:
+                    key = self.applyConversion(key, conv)
+            
+            if key:
+                
+                if iconcount == 0:
+                  pagecount += 1
+                  currentgrid = etree.SubElement(elem, "grid")
+                  currentgrid.set("id","grid_"+str(pagecount))
+                  currentgrid.set("columnCount", columncount )
+                  items = etree.SubElement(currentgrid, "items")
+                elif iconcount % maxicons == 0:
+                  pagecount += 1
+                  currentgrid = etree.SubElement(elem, "grid")
+                  currentgrid.set("id","grid_"+str(pagecount))
+                  currentgrid.set("columnCount", columncount )
+                  items = etree.SubElement(currentgrid, "items")
+                 
+                
+                el = copy.deepcopy(child)
+                XML_ExpandTree(el, elemSRC, srcXML)
+                XML_ExpandAllAttrib(el, elemSRC, srcXML)
+                
+                if el.tag=='__COPY__':
+                    for el_child in list(el):
+                        items.insert(ix, el_child)
+                        ix += 1
+                        iconcount += 1
+                else:
+                    items.insert(ix, el)
+                    ix += 1
+                    iconcount += 1
+        
+        # remove template child
+        elem.remove(child)
+        return True  # tree modified, nodes updated: restart from 1st elem
+
+    
+    
     def TREE_CUT(self, elem, child, src, srcXML, param):
         key, leftover, dfltd = self.getKey(src, srcXML, param)
         conv, leftover = self.getConversion(src, leftover)
@@ -976,7 +1055,7 @@ class CCommandCollection(CCommandHelper):
             res = self.path[srcXML]+'/'+addpath
         return res
     
-    """def ATTRIB_IMAGEURL(self, src, srcXML, param):
+    def ATTRIB_IMAGEURL(self, src, srcXML, param):
         key, leftover, dfltd = self.getKey(src, srcXML, param)
         width, leftover = self.getParam(src, leftover)
         height, leftover = self.getParam(src, leftover)
@@ -1024,130 +1103,7 @@ class CCommandCollection(CCommandHelper):
             res = PMS_baseURL + self.path[srcXML] + '/' + res
         
         dprint(__name__, 1, 'ImageURL: {0}', res)
-        return res"""
-    def ATTRIB_IMAGEURL(self, src, srcXML, param):
-        key, leftover, dfltd = self.getKey(src, srcXML, param)
-        width, leftover = self.getParam(src, leftover)
-        height, leftover = self.getParam(src, leftover)
-        if height=='':
-            height = width
-        
-        PMS_baseURL = self.PMS_baseURL
-        cmd_start = key.find('PMS(')
-        cmd_end = key.find(')', cmd_start)
-        if cmd_start>-1 and cmd_end>-1 and cmd_end>cmd_start:
-            PMS_address = key[cmd_start+4:cmd_end]
-            PMS_uuid = PlexAPI.getPMSFromAddress(self.ATV_udid, PMS_address)
-            PMS_baseURL = PlexAPI.getPMSProperty(self.ATV_udid, PMS_uuid, 'baseURL')
-            key = key[cmd_end+1:]
-        
-        AuthToken = PlexAPI.getPMSProperty(self.ATV_udid, self.PMS_uuid, 'accesstoken')
-        
-        if width=='':
-            # direct play
-            res = PlexAPI.getDirectImagePath(key, AuthToken)
-        else:
-            # request transcoding
-            res = PlexAPI.getTranscodeImagePath(key, AuthToken, self.path[srcXML], width, height)
-        
-        if res.startswith('/'):  # internal full path.
-            res = PMS_baseURL + res
-        elif res.startswith('http://') or key.startswith('https://'):  # external address
-            pass
-        else:  # internal path, add-on
-            res = PMS_baseURL + self.path[srcXML] + '/' + res
-        
-        dprint(__name__, 1, 'ImageURL: {0}', res)
         return res
-    
-    # Layered Fullscreen Background    
-    def ATTRIB_LFBG(self, src, srcXML, param):
-        key, leftover, dfltd = self.getKey(src, srcXML, param) 
-
-        import sys
-        import ntpath
-        import os.path
-        import urllib
-        import unicodedata
-        
-        from PIL import Image
-        from PIL import ImageFont
-        from PIL import ImageDraw
-           
-        # Catch the Params
-        param = param.replace(' ','+')
-        params = eval('[' + self._(param) + ']')
-        fanartpath = sys.path[0]+"/assets/fanart"
-        cachepath = fanartpath+"/cache"
-        cachefile = ntpath.basename(urllib.unquote(params[3]))+urllib.unquote(params[1]).replace(' ','+')+params[0] # Cache Filname
-        cachefile = unicodedata.normalize('NFKD',unicode(cachefile,"utf8")).encode("ascii","ignore")  # Only ASCII CHARS
-        
-        # Already created?
-        if os.path.isfile(cachepath+"/"+cachefile+".png"):
-            dprint(__name__, 1, 'GradBG: {0}', cachepath+"/"+cachefile+".png")  # Debug 
-            return cachefile # Bye Bye
-            
-        # No it's not
-        else:
-            gradient = Image.open(fanartpath+"/gradient"+params[0]+".png")
-            line = Image.open(fanartpath+"/line"+params[0]+params[2]+".png")
-            
-            # Setup Background
-            if params[3] != "":
-                urllib.urlretrieve(urllib.unquote(params[3]), cachepath+"/tmp.png")
-                background = Image.open(cachepath+"/tmp.png") 
-            else:
-                background = Image.open(fanartpath+"/blank.jpg")
-            
-            background = background.convert('RGB')
-            im = Image.new("RGB", (1920, 1080), "black")
-            
-            # Setup Resolution
-            if params[2] == "720":
-                background = background.resize((1280, 720), Image.ANTIALIAS)
-                gradient = gradient.resize((1280, 720), Image.ANTIALIAS)
-                destWidth = 1280
-                destHeight = 720
-            else:
-                background = background.resize((1920, 1080), Image.ANTIALIAS)
-                gradient = gradient.resize((1920, 1080), Image.ANTIALIAS)
-                destWidth = 1920
-                destHeight = 1080
-            
-            # Merge Layers
-            im.paste(background, (0, 0), 0)
-            im.paste(gradient, (0, 0), gradient)
-            im.paste(line, (0, 0), line)   
-            
-            # Setup Text
-            txt = unicode(urllib.unquote(params[1]), 'utf-8').replace('+',' ')
-            color = (206, 127, 26)       
-            font = fanartpath+"/HelveticaBold.ttf"
-            fontsize = destHeight / 36;
-            draw = ImageDraw.Draw(im)
-            w, h = draw.textsize(txt, ImageFont.truetype(font, fontsize))
-            
-            # Text Position
-            if params[0] == "tv":
-                txty = (destHeight * 100 / 720) - fontsize
-                txtx = destWidth*100/366
-            elif params[0] == "seasons":
-                txty = destHeight - (2*fontsize)
-                txtx = (destWidth - w) / 2
-            elif params[0] == "movie":
-                txty = (destHeight * 100 / 225) - fontsize
-                txtx = destWidth*100/366
-            else: #Fallback
-                txty = destHeight*100/720-h
-                txtx = destWidth*100/366
-            # Write    
-            draw.text((txtx, txty), txt , font=ImageFont.truetype(font, fontsize), fill=color)
-
-            # Save to Cache
-            im.save(sys.path[0]+"/assets/fanart/cache/"+cachefile+".png")
-                
-        dprint(__name__, 1, 'GradBG: {0}', sys.path[0]+"/fanart/cache/"+cachefile+".png")  # Debug        
-        return cachefile
     
     def ATTRIB_MUSICURL(self, src, srcXML, param):
         Track, leftover = self.getElement(src, srcXML, param)
@@ -1414,7 +1370,14 @@ class CCommandCollection(CCommandHelper):
             return "No Server in Proximity"
         else:
             return PMS_name
-
+    def ATTRIB_LFBG(self, src, srcXML, param):
+        import PILBackgrounds
+        res = ""
+        res = PILBackgrounds.generate(self, src, srcXML, param)  
+        if res == "":
+          res = sys.path[0]+'/assets/fanart/bg.jpg'     
+        dprint(__name__, 1, 'serving: {0}', res+".png")  # Debug 
+        return res
 
 
 if __name__=="__main__":

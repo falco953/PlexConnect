@@ -1,0 +1,53 @@
+<atv>
+  <head>
+    <script src="{{URL(:/js/utils.js)}}" />
+  </head>
+
+  <body>
+    <itemCollectionWithImageHeader id="Show_List">
+      <header>
+        <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/show.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","right","top","100","100","","10","Grid")}})}}</image>
+        </imageHeader>
+      </header>
+      <menu>
+        <sections>
+          <menuSection>
+            <items>
+              <oneLineMenuItem id="{{VAL(key)}}" onPlay="flattenSeason('{{URL(key)}}', '{{SETTING(flattenseason)}}', 'False')"
+                                                 onSelect="flattenSeason('{{URL(key)}}', '{{SETTING(flattenseason)}}', 'False')"
+                                                 onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenu')">
+                {{COPY(Directory)}}
+                <label>{{VAL(title)}}</label>
+								<rightLabel>{{unwatchedCountList(leafCount:0:viewedLeafCount:0)}}</rightLabel>{{CUT($showunwatched::False=CUT|True=)}}
+                <preview>
+                  <keyedPreview>
+                    <title>{{VAL(title)}}</title>
+                    <summary>{{VAL(summary)}}</summary>
+                    <image>{{IMAGEURL(thumb::384)}}</image>
+										<metadataKeys>
+											<label>{{TEXT(Actors)}}</label>
+											<label>{{TEXT(Director)}}</label>
+											<label>{{TEXT(Genre)}}</label>
+											<label>{{TEXT(Studio)}}</label>
+										</metadataKeys>
+										<metadataValues>
+											<label>{{VAL(Role/tag)}}{{VAL(Role[2]/tag::=, )}}{{VAL(Role[2]/tag)}}{{VAL(Role[3]/tag::=, )}}{{VAL(Role[3]/tag)}}</label>
+											<label>{{VAL(Director/tag)}}</label>
+											<label>{{VAL(Genre/tag)}}{{VAL(Genre[2]/tag::=, )}}{{VAL(Genre[2]/tag)}}</label>
+											<label>{{VAL(studio)}}</label>
+										</metadataValues>
+                  </keyedPreview>
+                </preview>
+              </oneLineMenuItem>{{CUT(Directory/title:CUT:=)}}
+
+              <oneLineMenuItem id="none">
+                <label>{{TEXT(No Unwatched Shows)}}</label>
+              </oneLineMenuItem>{{CUT(Directory/title::=CUT)}}
+            </items>
+          </menuSection>
+        </sections>
+      </menu>
+    </itemCollectionWithImageHeader>
+  </body>
+</atv>

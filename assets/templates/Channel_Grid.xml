@@ -13,9 +13,9 @@
     <!--Channels Grid-->
     <scroller id="Channels_Grid">
       <header>
-        <simpleHeader>
-          <title>{{TEXT(Plex Channels)}}</title>
-        </simpleHeader>
+        <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=765)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{TEXT(Plex Channels)}}","","backgrounds/channel.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","110","","","List")}})}}</image>
+        </imageHeader>
       </header>
       
       <items>
@@ -35,7 +35,7 @@
                            onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect=ChannelsVideo')">
               {{COPY(Directory)}}
               {{VAR(channels:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
-                <title>{{VAL(title)}}</title>
+                <title>{{VAL(title)}}sss</title>
                 <image>{{IMAGEURL(thumb::384)}}</image>
                 <defaultImage>resource://Poster.png</defaultImage>
                 <!--badgeCount></badgeCount-->

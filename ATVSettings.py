@@ -19,9 +19,10 @@ options = { \
     'library_recentlyadded'            :('checked', 'unchecked'), \
     'library_channels'            :('unchecked', 'checked'), \
     'movieview'         :('Grid', 'List', 'Detailed List'), \
+    'starttab'         :('Library', 'Shared Libraries', 'Channels'), \
     'homevideoview'     :('Grid', 'List', 'Detailed List'), \
     'actorview'         :('Movies', 'Portrait'), \
-    'showview'          :('List', 'Grid', 'Bookcase'), \
+    'showview'          :('List', 'Grid', 'Flow', 'Detailed List', 'Bookcase'), \
     'flattenseason'     :('False', 'True'), \
     'seasonview'        :('List', 'Coverflow'), \
     'channelview'       :('List', 'Grid', 'Bookcase'), \
@@ -64,6 +65,7 @@ options = { \
     'overscanadjust'    :('0', '1', '2', '3', '-3', '-2', '-1'), \
     'clockposition'     :('Center', 'Right', 'Left'), \
     'showendtime'       :('True', 'False'), \
+    'showplayinfos'       :('True', 'False'), \
     'timeformat'        :('24 Hour', '12 Hour'), \
     'myplex_user'       :('', ), \
     'myplex_auth'       :('', ), \

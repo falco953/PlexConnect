@@ -8,7 +8,8 @@
     {{CUT(size:CUT:0=CUT|1=)}}
       <header>
         <imageHeader>
-          <image insets="25, 0, 0, 0" required="true">{{URL(:/thumbnails/moviestext{{VAL(^aTVScreenResolution)}}.jpg)}}</image>
+          <!--<image insets="25, 0, 0, 0" required="true">{{URL(:/thumbnails/moviestext{{VAL(^aTVScreenResolution)}}.jpg)}}</image>-->
+        <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=765)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/movie.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","100","","10","Grid")}})}}</image>
         </imageHeader>
       </header>
       <items>

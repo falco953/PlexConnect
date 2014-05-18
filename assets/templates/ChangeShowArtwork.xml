@@ -6,10 +6,9 @@
   <body>
     <scroller id="Show_Bookcase">
       <header>
-        <simpleHeader>
-          <title>{{VAL(title2)}}</title>
-          <subtitle>{{TEXT(Select Artwork)}}</subtitle>
-        </simpleHeader>
+        <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=765)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{VAL(title2)}}","{{TEXT(Select Artwork)}}","backgrounds/blank.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","110","","","List")}})}}</image>
+        </imageHeader>
       </header>
       
       <items>

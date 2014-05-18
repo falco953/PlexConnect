@@ -13,7 +13,7 @@
       <itemCollectionWithImageHeader id="com.sample.menu-items-with-sections">
       <header>
         <imageHeader>
-            <image insets="100, 0, 0, 0" required="true">{{URL(:/thumbnails/header{{VAL(^aTVScreenResolution)}}.png)}}</image>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=580|1080=810)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","","","backgrounds/library.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","0","0","FFFFFF","FFFFFF","center","top","","110","","","Empty")}})}}</image>
         </imageHeader>
       </header>
           

@@ -15,7 +15,8 @@
       <scroller id="com.sample.movie-showcase-grid">
       <header>
         <imageHeader>
-            <image insets="{{VAL(^aTVScreenResolution:1:720=50|1080=80)}}, 0, 0, 0" required="true">{{URL(:/thumbnails/header{{VAL(^aTVScreenResolution)}}.png)}}</image>
+            <!--<image insets="{{VAL(^aTVScreenResolution:1:720=50|1080=80)}}, 0, 0, 0" required="true">{{URL(:/thumbnails/header{{VAL(^aTVScreenResolution)}}.png)}}</image>-->
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=520|1080=790)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","","","backgrounds/library.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","0","0","FFFFFF","FFFFFF","center","top","","110","","","Empty")}})}}</image>
         </imageHeader>{{CUT($imageheader::Hide=CUT|Show=)}}{{CUT(^aTVFirmwareVersion:CUT:=CUT|6.0=)}}
         <simpleHeader>
             <title>{{TEXT(Plex Library)}}</title>
@@ -106,10 +107,10 @@
             <shelfSection>
               {{COPY(Server:@OnDeck/size::0=|1=COPY)}}
               <items>
-                <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" alwaysShowTitles="{{VAL($showtitles_library::Highlighted Only=false|Show All=true)}}"
+                <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" showOutline="false" alwaysShowTitles="{{VAL($showtitles_library::Highlighted Only=false|Show All=true)}}"
                             onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play')"
                             onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=Movie|episode=Episode)}}PrePlay')"
-                            onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenuVideo')">
+                            onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=ScrobbleMenuVideo|episode=ScrobbleMenuTVOnDeck)}}')">
                   {{COPY(@OnDeck/Server/Video)}}
                   {{VAR(items:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                   <title>{{VAL(type::movie={{VAL(title)}}|episode={{VAL(grandparentTitle)}})}}</title>
@@ -166,27 +167,30 @@
           {{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
           <title>{{TEXT(Recently Added)}}</title>
         </collectionDivider>{{CUT($library_recentlyadded::checked=|unchecked=CUT)}}{{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}  
-        <shelf id="shelf_2" columnCount="7">
+        <pagedGrid id="paged-grid-0">
+            <!--<shelf id="shelf_2" columnCount="7">-->
           {{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
-          <sections>
-            <shelfSection>
+          <!--<sections>
+            <shelfSection>-->
               {{COPY(Server:@RecentlyAdded/size::0=|1=COPY)}}
-              <items>
+              <!--<items>-->
                 <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" alwaysShowTitles="{{VAL($showtitles_library::Highlighted Only=false|Show All=true)}}"
                             onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play')"
                             onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=Movie|episode=Episode)}}PrePlay')"
-                            onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenuVideo')">
-                  {{COPY(@RecentlyAdded/Server/Video)}}
+                            onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=ScrobbleMenuVideo|episode=ScrobbleMenuTVOnDeck)}}')">
+                  {{PAGEDCOPY(@RecentlyAdded/Server/Video,7,1)}}
                   {{VAR(items:NoKey:TRUE)}} 
                   <title>{{VAL(type::movie={{VAL(title)}}|episode={{VAL(grandparentTitle)}})}}</title>
                   <subtitle>{{VAL(type::movie={{VAL(year)}}|episode={{episodestring(parentIndex:0:index:0)}})}}</subtitle>
                   <image>{{IMAGEURL({{VAL(type::movie=thumb|episode=parentThumb)}}::384)}}</image>
                   <defaultImage>resource://Poster.png</defaultImage>
                 </moviePoster>
-              </items>
+              <!--</items>
             </shelfSection>
           </sections>
-        </shelf>{{CUT($library_recentlyadded::checked=|unchecked=CUT)}}{{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
+        </shelf>-->
+            
+            </pagedGrid>{{CUT($library_recentlyadded::checked=|unchecked=CUT)}}{{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
               
          
         <collectionDivider alignment="left" accessibilityLabel="Channels">

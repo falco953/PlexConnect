@@ -8,10 +8,10 @@
     <preview>
       <scrollerPreview id="com.sample.moreInfoPreview">
         <header>
-          <metadataHeader>
-            <title>{{VAL(title2)}}</title>
-            <subtitle>{{VAL(size)}} {{TEXT(Movies)}}</subtitle>
-          </metadataHeader>
+                   <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=580|1080=800)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/movie.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","200","20","","20","Grid")}})}}</image>
+        </imageHeader>
+
         </header>
         <items>
           <grid id="grid_0" columnCount="5">

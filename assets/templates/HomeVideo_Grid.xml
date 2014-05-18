@@ -7,10 +7,9 @@
     <scroller id="com.sample.movie-grid">
     {{CUT(size:CUT:0=CUT|1=)}}
       <header>
-        <simpleHeader>
-          <title>{{VAL(title1)}}</title>
-          <subtitle>{{VAL(title2)}}</subtitle>
-        </simpleHeader>
+        <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=765)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","100","","20","Grid")}})}}</image>
+        </imageHeader>
       </header>
       <items>
         <grid columnCount="5" id="grid_0">
