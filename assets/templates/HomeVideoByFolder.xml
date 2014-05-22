@@ -43,7 +43,7 @@
     <itemCollectionWithImageHeader id="HomeVideoList" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
       <header>
         <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","40","20","Grid")}})}}</image>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","40","","20","Grid")}})}}</image>
         </imageHeader>
       </header>
 
@@ -93,7 +93,7 @@
     <itemCollectionWithImageHeader id="HomeVideo_DetailedList" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
       <header>
         <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","40","20","Grid")}})}}</image>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","40","","20","Grid")}})}}</image>
         </imageHeader>
       </header>
 
