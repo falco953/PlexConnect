@@ -35,7 +35,7 @@
                            onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect=ChannelsVideo')">
               {{COPY(Directory)}}
               {{VAR(channels:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
-                <title>{{VAL(title)}}sss</title>
+                <title>{{VAL(title)}}</title>
                 <image>{{IMAGEURL(thumb::384)}}</image>
                 <defaultImage>resource://Poster.png</defaultImage>
                 <!--badgeCount></badgeCount-->
