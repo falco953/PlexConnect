@@ -11,6 +11,7 @@ var showInfos;
 var showClock, timeFormat, clockPosition, overscanAdjust;
 var showEndtime;
 var subtitleURL, subtitleSize;
+var overlaysVisible;
 
 
 // information for atv.player - computed internally to application.js
@@ -287,36 +288,51 @@ if( atv.Element ) {
  */
 atv.player.onTransportControlsDisplayed = function(animationDuration)
 {
-  var animation = {"type": "BasicAnimation", "keyPath": "opacity",
-                    "fromValue": 0, "toValue": 1, "duration": animationDuration,
-                    "removedOnCompletion": false, "fillMode": "forwards",
-                    "animationDidStop": function(finished) {} };
-  if (showClock == "True") clockView.addAnimation(animation, clockView);
-  if (showEndtime == "True") endTimeView.addAnimation(animation, endTimeView);
-  if (showInfos == "True") {
-      overlay.addAnimation(animation, overlay);
-      overlay2.addAnimation(animation, overlay2);
-      infoView.addAnimation(animation, infoView);
-      infoView2.addAnimation(animation, infoView2);
-      posterView.addAnimation(animation, posterView);
-  }
+    
 };
 
 atv.player.onTransportControlsHidden = function(animationDuration)
 {
-  var animation = {"type": "BasicAnimation", "keyPath": "opacity",
-                    "fromValue": 1, "toValue": 0, "duration": animationDuration,
-                    "removedOnCompletion": false, "fillMode": "forwards",
-                    "animationDidStop": function(finished) {} };
-  if (showClock == "True") clockView.addAnimation(animation, clockView);
-  if (showEndtime == "True") endTimeView.addAnimation(animation, endTimeView);
-  if (showInfos == "True") {
-      overlay.addAnimation(animation, overlay);
-      overlay2.addAnimation(animation, overlay2);
-      infoView.addAnimation(animation, infoView);
-      infoView2.addAnimation(animation, infoView2);
-      posterView.addAnimation(animation, posterView);
-  }
+  
+};
+
+
+/*
+ * Show / Hide Overlay
+ */
+
+showOverlays = function(animationDuration)
+{
+    var animation = {"type": "BasicAnimation", "keyPath": "opacity",
+        "fromValue": 0, "toValue": 1, "duration": animationDuration,
+        "removedOnCompletion": false, "fillMode": "forwards",
+        "animationDidStop": function(finished) {} };
+    if (showClock == "True") clockView.addAnimation(animation, clockView);
+    if (showEndtime == "True") endTimeView.addAnimation(animation, endTimeView);
+    if (showInfos == "True") {
+        overlay.addAnimation(animation, overlay);
+        overlay2.addAnimation(animation, overlay2);
+        infoView.addAnimation(animation, infoView);
+        infoView2.addAnimation(animation, infoView2);
+        posterView.addAnimation(animation, posterView);
+    }
+};
+
+hideOverlays = function(animationDuration)
+{
+    var animation = {"type": "BasicAnimation", "keyPath": "opacity",
+        "fromValue": 1, "toValue": 0, "duration": animationDuration,
+        "removedOnCompletion": false, "fillMode": "forwards",
+        "animationDidStop": function(finished) {} };
+    if (showClock == "True") clockView.addAnimation(animation, clockView);
+    if (showEndtime == "True") endTimeView.addAnimation(animation, endTimeView);
+    if (showInfos == "True") {
+        overlay.addAnimation(animation, overlay);
+        overlay2.addAnimation(animation, overlay2);
+        infoView.addAnimation(animation, infoView);
+        infoView2.addAnimation(animation, infoView2);
+        posterView.addAnimation(animation, posterView);
+    }
 };
 
 /*
@@ -324,7 +340,7 @@ atv.player.onTransportControlsHidden = function(animationDuration)
  */
  
 var pingTimer = null;
- 
+
 atv.player.playerStateChanged = function(newState, timeIntervalSec) {
   log("Player state: " + newState + " at this time: " + timeIntervalSec);
   state = null;
@@ -335,6 +351,7 @@ atv.player.playerStateChanged = function(newState, timeIntervalSec) {
     state = 'paused';
     pingTimer = atv.setInterval(function() {loadPage( baseURL + '/video/:/transcode/universal/ping?session=' + 
                                                                   atv.device.udid); }, 60000);
+    showOverlays(0.5);
   }
 
   // Playing state, kill paused state ping timer
@@ -342,6 +359,8 @@ atv.player.playerStateChanged = function(newState, timeIntervalSec) {
   {
     state = 'play'
     atv.clearInterval(pingTimer);
+      hideOverlays(0.5);
+
   }
 
   // Loading state, tell PMS we're buffering
