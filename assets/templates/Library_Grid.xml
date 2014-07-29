@@ -3,11 +3,12 @@
     <script src="{{URL(:/js/utils.js)}}" />
     <script src="{{URL(:/js/scrobble.js)}}" />
     <script src="{{URL(:/js/settings.js)}}" />
+    <script src="{{URL(:/js/sectionHoldSelect.js)}}" />
   </head>
 
   <body>
-      {{ADDXML(OnDeck::/library/onDeck)}}      
-      {{ADDXML(RecentlyAdded::/library/recentlyAdded?stack=0)}}
+      {{ADDXML(OnDeck::/library/onDeck?X-Plex-Container-Start=0&amp;X-Plex-Container-Size=40)}}
+      {{ADDXML(RecentlyAdded::/library/recentlyAdded?X-Plex-Container-Start=0&amp;X-Plex-Container-Size=40)}}
       {{ADDXML(VideoChannels::/channels/all)}}
       {{VAR(items:NoKey:FALSE)}}
       {{VAR(sections:NoKey:FALSE)}}  <!--this sets the var to FALSE-->
@@ -69,11 +70,13 @@
                    
                     <items>
                         <!-- /library/sections -->
+                        {{VAR(serverName:name)}}
+                        {{VAR(searchKey:searchKey)}}
                         <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" featured="true" 
                                                alwaysShowTitles="{{VAL($sectionicons::Apple=true|Plex=false|Fanart=true)}}"
                                                onPlay="atv.loadURL('{{URL(key)}}')"
                                                onSelect="atv.loadURL('{{URL(key)}}')"
-                                               onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                                               onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
                             {{COPY(Directory)}}
                             {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                             <title>{{VAL(title)}}</title>
@@ -135,11 +138,13 @@
                    
                     <items>
                         <!-- /library/sections -->
-                        <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" featured="true" 
-                                               alwaysShowTitles="{{VAL($sectionicons::Apple=true|Plex=false|Fanart=true)}}"
-                                               onPlay="atv.loadURL('{{URL(key)}}')"
-                                               onSelect="atv.loadURL('{{URL(key)}}')"
-                                               onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                        {{VAR(serverName:name)}}
+                        {{VAR(searchKey:searchKey)}}
+                        <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" featured="true"
+                            alwaysShowTitles="{{VAL($sectionicons::Apple=true|Plex=false|Fanart=true)}}"
+                            onPlay="atv.loadURL('{{URL(key)}}')"
+                            onSelect="atv.loadURL('{{URL(key)}}')"
+                            onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
                             {{COPY(Directory)}}
                             {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                             <title>{{VAL(title)}}</title>
@@ -167,30 +172,31 @@
           {{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
           <title>{{TEXT(Recently Added)}}</title>
         </collectionDivider>{{CUT($library_recentlyadded::checked=|unchecked=CUT)}}{{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}  
-        <pagedGrid id="paged-grid-0">
-            <!--<shelf id="shelf_2" columnCount="7">-->
+        <!--<pagedGrid id="paged-grid-0">-->
+            <shelf id="shelf_2" columnCount="7">
           {{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
-          <!--<sections>
-            <shelfSection>-->
+          <sections>
+            <shelfSection>
               {{COPY(Server:@RecentlyAdded/size::0=|1=COPY)}}
-              <!--<items>-->
-                <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" alwaysShowTitles="{{VAL($showtitles_library::Highlighted Only=false|Show All=true)}}"
+              <items>
+                <fourByThreePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" alwaysShowTitles="{{VAL($showtitles_library::Highlighted Only=false|Show All=true)}}"
                             onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play')"
-                            onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=Movie|episode=Episode)}}PrePlay')"
-                            onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=ScrobbleMenuVideo|episode=ScrobbleMenuTVOnDeck)}}')">
-                  {{PAGEDCOPY(@RecentlyAdded/Server/Video,7,1)}}
+                            onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=MoviePrePlay|episode=EpisodePrePlay|season=season)}}')"
+                            onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenu{{VAL(type::movie=Video|season=Season)}}')">
+                  {{COPY(@RecentlyAdded/Server/Video,Directory)}}
                   {{VAR(items:NoKey:TRUE)}} 
-                  <title>{{VAL(type::movie={{VAL(title)}}|episode={{VAL(grandparentTitle)}})}}</title>
-                  <subtitle>{{VAL(type::movie={{VAL(year)}}|episode={{episodestring(parentIndex:0:index:0)}})}}</subtitle>
-                  <image>{{IMAGEURL({{VAL(type::movie=thumb|episode=parentThumb)}}::384)}}</image>
-                  <defaultImage>resource://Poster.png</defaultImage>
-                </moviePoster>
-              <!--</items>
+                  <title>{{VAL(type::movie={{VAL(title)}}|episode={{VAL(parentTitle)}}|season={{VAL(parentTitle)}}|album={{VAL(parentTitle)}})}}</title>
+                  <subtitle>{{VAL(type::movie={{VAL(year)}}|episode={{VAL(title)}}|season={{VAL(title)}}|album={{VAL(title)}})}}</subtitle>
+                  <badgeCount>{{unwatchedCountGrid(leafCount:0:viewedLeafCount:0)}}</badgeCount>{{CUT($showunwatched::False=CUT|True=)}}
+                  <image>{{IMAGEURL(thumb::384)}}</image>
+                  <defaultImage>resource://{{VAL(type::movie=Poster|episode=Poster|season=Poster|album=Square|track=Square)}}.png</defaultImage>
+                </fourByThreePoster>
+              </items>
             </shelfSection>
           </sections>
-        </shelf>-->
+        </shelf>{{CUT($library_recentlyadded::checked=|unchecked=CUT)}}{{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
             
-            </pagedGrid>{{CUT($library_recentlyadded::checked=|unchecked=CUT)}}{{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
+        <!--</pagedGrid>-->
               
          
         <collectionDivider alignment="left" accessibilityLabel="Channels">
@@ -230,11 +236,13 @@
                    
                     <items>
                         <!-- /library/sections -->
-                        <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" featured="true" 
-                                               alwaysShowTitles="{{VAL($sectionicons::Apple=true|Plex=false|Fanart=true)}}"
-                                               onPlay="atv.loadURL('{{URL(key)}}')"
-                                               onSelect="atv.loadURL('{{URL(key)}}')"
-                                               onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                        {{VAR(serverName:name)}}
+                        {{VAR(searchKey:searchKey)}}
+                        <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" featured="true"
+                            alwaysShowTitles="{{VAL($sectionicons::Apple=true|Plex=false|Fanart=true)}}"
+                            onPlay="atv.loadURL('{{URL(key)}}')"
+                            onSelect="atv.loadURL('{{URL(key)}}')"
+                            onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
                             {{COPY(Directory)}}
                             {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                             <title>{{VAL(title)}}</title>

@@ -843,9 +843,14 @@ class CCommandCollection(CCommandHelper):
     # XML TREE modifier commands
     # add new commands to this list!
     def TREE_COPY(self, elem, child, src, srcXML, param):
-        tag, param_enbl = self.getParam(src, param)
-
-        src, srcXML, tag = self.getBase(src, srcXML, tag)        
+        
+        # is MULTICOPY?
+        tags=param.split(',')
+        if len(tags) > 1:
+            tag, param_enbl = self.getParam(src, tags[0])
+        else:
+            tag, param_enbl = self.getParam(src, param)
+        src, srcXML, tag = self.getBase(src, srcXML, tag)
         
         # walk the src path if neccessary
         while '/' in tag and src!=None:
@@ -858,8 +863,18 @@ class CCommandCollection(CCommandHelper):
             if el==child:
                 break
         
-        # duplicate child and add to tree
-        for elemSRC in src.findall(tag):
+        
+        #get all requested tags
+        itemrange = src.findall(tag)
+        # is MULTICOPY?
+        for i in range(len(tags)):
+            if i > 0:
+                itemrange=itemrange+src.findall(tags[i])
+        
+        # sort by addedAt (updatedAt?)
+        if len(tags) > 1:
+            itemrange = sorted(itemrange, key=lambda x: x.attrib.get('addedAt'), reverse=True)
+        for elemSRC in itemrange:
             key = 'COPY'
             if param_enbl!='':
                 key, leftover, dfltd = self.getKey(elemSRC, srcXML, param_enbl)
@@ -885,13 +900,16 @@ class CCommandCollection(CCommandHelper):
         return True  # tree modified, nodes updated: restart from 1st elem
     
     def TREE_PAGEDCOPY(self, elem, child, src, srcXML, param):
-    
+        
         # is MULTICOPY?
         tags=param.split(',')
         tag, param_enbl = self.getParam(src, tags[0])
         src, srcXML, tag = self.getBase(src, srcXML, tag)
         columncount=tags[1]
         rowcount=tags[2]
+        
+        
+        
         
         # walk the src path if neccessary
         while '/' in tag and src!=None:
@@ -903,23 +921,23 @@ class CCommandCollection(CCommandHelper):
         for ix, el in enumerate(list(elem)):
             if el==child:
                 break
-
-        #get all requested tags    
+        
+        #get all requested tags
         itemrange = src.findall(tag)
         # is MULTICOPY?
         for i in range(len(tags)):
-          if i > 2:
-            itemrange=itemrange+src.findall(tags[i])  
-
+            if i > 2:
+                itemrange=itemrange+src.findall(tags[i])
+        
         maxicons = int(columncount) * int(rowcount)
-        pagecount = 0 
+        pagecount = 0
         iconcount = 0
-
+        
         if len(tags) > 3:
-          itemrange = sorted(itemrange, key=lambda x: x.attrib.get('addedAt'), reverse=True)        
+            itemrange = sorted(itemrange, key=lambda x: x.attrib.get('addedAt'), reverse=True)
         
         for elemSRC in itemrange:
-
+            
             key = 'COPY'
             if param_enbl!='':
                 key, leftover, dfltd = self.getKey(elemSRC, srcXML, param_enbl)
@@ -927,25 +945,26 @@ class CCommandCollection(CCommandHelper):
                 if not dfltd:
                     key = self.applyConversion(key, conv)
             
+            
             if key:
                 
                 if iconcount == 0:
-                  pagecount += 1
-                  currentgrid = etree.SubElement(elem, "grid")
-                  currentgrid.set("id","grid_"+str(pagecount))
-                  currentgrid.set("columnCount", columncount )
-                  items = etree.SubElement(currentgrid, "items")
+                    pagecount += 1
+                    currentgrid = etree.SubElement(elem, "grid")
+                    currentgrid.set("id","grid_"+str(pagecount))
+                    currentgrid.set("columnCount", columncount )
+                    items = etree.SubElement(currentgrid, "items")
                 elif iconcount % maxicons == 0:
-                  pagecount += 1
-                  currentgrid = etree.SubElement(elem, "grid")
-                  currentgrid.set("id","grid_"+str(pagecount))
-                  currentgrid.set("columnCount", columncount )
-                  items = etree.SubElement(currentgrid, "items")
-                 
+                    pagecount += 1
+                    currentgrid = etree.SubElement(elem, "grid")
+                    currentgrid.set("id","grid_"+str(pagecount))
+                    currentgrid.set("columnCount", columncount )
+                    items = etree.SubElement(currentgrid, "items")
+                
                 
                 el = copy.deepcopy(child)
-                XML_ExpandTree(el, elemSRC, srcXML)
-                XML_ExpandAllAttrib(el, elemSRC, srcXML)
+                XML_ExpandTree(self, el, elemSRC, srcXML)
+                XML_ExpandAllAttrib(self, el, elemSRC, srcXML)
                 
                 if el.tag=='__COPY__':
                     for el_child in list(el):
@@ -957,11 +976,14 @@ class CCommandCollection(CCommandHelper):
                     ix += 1
                     iconcount += 1
         
+        
+        
+        
+        
         # remove template child
         elem.remove(child)
         return True  # tree modified, nodes updated: restart from 1st elem
 
-    
     
     def TREE_CUT(self, elem, child, src, srcXML, param):
         key, leftover, dfltd = self.getKey(src, srcXML, param)

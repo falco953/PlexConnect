@@ -3,12 +3,13 @@
     <script src="{{URL(:/js/utils.js)}}" />
     <script src="{{URL(:/js/scrobble.js)}}" />
     <script src="{{URL(:/js/settings.js)}}" />
+    <script src="{{URL(:/js/sectionHoldSelect.js)}}" />
   </head>
 
   <body>
       {{VAR(sections:NoKey:FALSE)}}  <!--this sets the var to FALSE-->
           
-      <itemCollectionWithImageHeader id="com.sample.menu-items-with-sections">
+      <itemCollectionWithImageHeader id="Library_List">
       <header>
         <imageHeader>
             <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=580|1080=810)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","","","backgrounds/library.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","0","0","FFFFFF","FFFFFF","center","top","","110","","","Empty")}})}}</image>
@@ -34,10 +35,12 @@
             <items> 
                 
               <!-- /library/sections -->
+              {{VAR(serverName:name)}}
+              {{VAR(searchKey:searchKey)}}
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')"
-                                       onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                                        onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
               {{COPY(Directory)}}
               {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                 <label>{{VAL(title)}}</label>
@@ -55,10 +58,12 @@
               </oneLineMenuItem>{{CUT($library_ondeck::checked=|unchecked=CUT)}}             
               
             <!-- /library/sections -->
+            {{VAR(serverName:name)}}
+            {{VAR(searchKey:searchKey)}}
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')"
-                                       onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                                        onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
               {{COPY(Directory)}}
               {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                 <label>{{VAL(title)}}</label>
@@ -83,10 +88,12 @@
               </oneLineMenuItem>{{CUT($library_channels::checked=|unchecked=CUT)}}
               
                 <!-- /library/sections -->
+                {{VAR(serverName:name)}}
+                {{VAR(searchKey:searchKey)}}
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')"
-                                       onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                                       onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
               {{COPY(Directory)}}
               {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                 <label>{{VAL(title)}}</label>
@@ -111,7 +118,7 @@
       </menu>
     </itemCollectionWithImageHeader>{{CUT($imageheader::Hide=CUT|Show=)}}{{CUT(^aTVFirmwareVersion:CUT:=CUT|6.0=)}}{{CUT(#sections::FALSE=CUT|TRUE=)}}  <!--CUT if no section added-->
       
-    <listWithPreview id="com.sample.menu-items-with-sections">
+    <listWithPreview id="Library_List">
       <header>
         <simpleHeader>
           <title>{{TEXT(Plex Library)}}</title>
@@ -133,11 +140,13 @@
             
             <items>
                 
-              <!-- /library/sections -->
+                <!-- /library/sections -->
+                {{VAR(serverName:name)}}
+                {{VAR(searchKey:searchKey)}}
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')"
-                                       onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                                        onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
               {{COPY(Directory)}}
               {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                 <label>{{VAL(title)}}</label>
@@ -155,10 +164,12 @@
               </oneLineMenuItem>{{CUT($library_ondeck::checked=|unchecked=CUT)}}  
                 
               <!-- /library/sections -->
+              {{VAR(serverName:name)}}
+              {{VAR(searchKey:searchKey)}}
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')"
-                                       onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                                       onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
               {{COPY(Directory)}}
               {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                 <label>{{VAL(title)}}</label>
@@ -183,10 +194,12 @@
               </oneLineMenuItem>{{CUT($library_channels::checked=|unchecked=CUT)}}
                 
               <!-- /library/sections -->
+              {{VAR(serverName:name)}}
+              {{VAR(searchKey:searchKey)}}
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')"
-                                       onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
+                                       onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
               {{COPY(Directory)}}
               {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                 <label>{{VAL(title)}}</label>
