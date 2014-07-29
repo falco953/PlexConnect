@@ -14,3 +14,7 @@ PlexConnect.log
 *.pem
 
 *.der
+
+ATVSettings.py
+
+assets/templates/Library.xml
