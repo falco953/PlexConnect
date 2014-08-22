@@ -463,21 +463,15 @@ def getXMLFromMultiplePMS(ATV_udid, path, type, options={}):
             else:
                 Server.set('size',    XML.getroot().get('size', '0'))
                 
-             for Dir in XML.getiterator('Directory'):  # copy "Directory" content, add PMS to links
-                key = Dir.get('key')  # absolute path
-                Dir.set('key',    PMS_mark + getURL('', path, key))
-                Dir.set('refreshKey', getURL(baseURL, path, key) + '/refresh')
-                if 'thumb' in Dir.attrib:
-                  Dir.set('thumb',  PMS_mark + getURL('', path, Dir.get('thumb')))
-                if 'grandparentThumb' in Dir.attrib:
-                  Dir.set('grandparentThumb',  PMS_mark + getURL('', path, Dir.get('grandparentThumb'))) 
-                if 'grandparentKey' in Dir.attrib:
-                  Dir.set('grandparentKey',  PMS_mark + getURL('', path, Dir.get('grandparentKey')))
-                if 'parentThumb' in Dir.attrib:
-                  Dir.set('parentThumb',  PMS_mark + getURL('', path, Dir.get('parentThumb')))
-                if 'art' in Dir.attrib:
-                  Dir.set('art',    PMS_mark + getURL('', path, Dir.get('art')))
-                Server.append(Dir)
+                for Dir in XML.getiterator('Directory'):  # copy "Directory" content, add PMS to links
+                    key = Dir.get('key')  # absolute path
+                    Dir.set('key',    PMS_mark + getURL('', path, key))
+                    Dir.set('refreshKey', getURL(baseURL, path, key) + '/refresh')
+                    if 'thumb' in Dir.attrib:
+                        Dir.set('thumb',  PMS_mark + getURL('', path, Dir.get('thumb')))
+                    if 'art' in Dir.attrib:
+                        Dir.set('art',    PMS_mark + getURL('', path, Dir.get('art')))
+                    Server.append(Dir)
                     
                 for Video in XML.getiterator('Video'):  # copy "Video" content, add PMS to links
                     key = Video.get('key')  # absolute path
