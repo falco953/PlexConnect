@@ -14,6 +14,7 @@
         </imageHeader>
 
       </header>
+      {{VAR(parentThumb:thumb)}}
       <items>
         <shelf id="coverflow" columnCount="{{EVAL(min({{VAL(size:0)}},4))}}">
           <sections>
@@ -25,7 +26,8 @@
                               onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenu')">
                   {{COPY(Directory)}}
                   <title>{{VAL(title)}}</title>
-                  <image>{{IMAGEURL(thumb::768)}}</image>
+                  <image>{{IMAGEURL(thumb::768)}}</image>{{CUT(thumb:CUT:=CUT| =)}}
+                  <image>{{IMAGEURL(#parentThumb::768)}}</image>{{CUT(thumb:: =CUT)}}
                   <defaultImage>resource://Poster.png</defaultImage>
                 </goldenPoster><!--{{CUT(Directory/title:CUT:=|All episodes=CUT)}}-->
                   
