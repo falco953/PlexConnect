@@ -20,7 +20,7 @@
 	     </imageHeader>
 	   </header>
       <rating>{{VAL(Video/studio)}}</rating>
-      <summary>{{VAL(Video/summary)}}</summary>
+      <summary>{{VAL(Video/tagline)}} {{VAL(Video/summary)}}</summary>
       <image style="moviePoster">{{IMAGEURL(Video/thumb::768)}}</image>
       <defaultImage>resource://Poster.png</defaultImage>
 
