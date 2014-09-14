@@ -112,7 +112,7 @@
               {{COPY(Server:@OnDeck/size::0=|1=COPY)}}
               <items>
                 <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" showOutline="false" alwaysShowTitles="{{VAL($showtitles_library::Highlighted Only=false|Show All=true)}}"
-                            onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play')"
+                            onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play::{{VAL(ratingKey)}}')"
                             onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=Movie|episode=Episode)}}PrePlay')"
                             onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=ScrobbleMenuVideo|episode=ScrobbleMenuTVOnDeck)}}')">
                   {{COPY(@OnDeck/Server/Video)}}
@@ -127,7 +127,7 @@
             </shelfSection>
           </sections>
         </shelf>{{CUT($library_ondeck::checked=|unchecked=CUT)}}{{CUT(@OnDeck/Server/size:CUT:0=CUT|1=)}}  
-        
+     
         <__COPY__>  
         {{COPY(Server:@main/size::0=|1=COPY)}}
         <collectionDivider alignment="left" accessibilityLabel="Library">
@@ -183,7 +183,7 @@
               {{COPY(Server:@RecentlyAdded/size::0=|1=COPY)}}
               <items>
                 <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" alwaysShowTitles="{{VAL($showtitles_library::Highlighted Only=false|Show All=true)}}"
-                            onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play')"
+                            onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play::{{VAL(ratingKey)}}')"
                             onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{VAL(type::movie=MoviePrePlay|episode=EpisodePrePlay|season=season)}}')"
                             onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenu{{VAL(type::movie=Video|season=Season)}}')">
                   {{COPY(@RecentlyAdded/Server/Video,Directory)}}
@@ -201,7 +201,6 @@
         </shelf>{{CUT($library_recentlyadded::checked=|unchecked=CUT)}}{{CUT(@RecentlyAdded/Server/size:CUT:0=CUT|1=)}}
             
         <!--</pagedGrid>-->
-              
          
         <collectionDivider alignment="left" accessibilityLabel="Channels">
             <title>{{TEXT(Channels)}}</title>
