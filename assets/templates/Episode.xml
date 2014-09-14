@@ -98,7 +98,7 @@
           <menuSection>
             <items>
               <twoLineEnhancedMenuItem id="{{VAL(ratingKey)}}"
-                                         onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play')"
+                                         onPlay="atv.loadURL('{{URL()}}&amp;PlexConnect=Play:Continuous:{{VAL(ratingKey)}}')"
                                          onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect=EpisodePrePlay')"
                                          onHoldSelect="scrobbleMenu('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(ratingKey)}}', '{{TEXT(Episode)}}');">
                 {{COPY(Video:index::=|0 =COPY)}}
