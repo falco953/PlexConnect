@@ -16,8 +16,9 @@ var overlaysVisible;
 
 // information for atv.player - computed internally to application.js
 var lastReportedTime = -1;
+var lastTranscoderPingTime = -1;
 var remainingTime = 0;
-
+var isTranscoding = false;
 
 
 /*
@@ -54,6 +55,7 @@ atv.player.playerTimeDidChange = function(time)
   if (atv.player.asset.getElementByTagName('startTime'))
     thisReportTime += parseInt(atv.player.asset.getElementByTagName('startTime').textContent)
   
+// report watched time
   if (lastReportedTime == -1 || Math.abs(thisReportTime-lastReportedTime) > 5000)
   {
     lastReportedTime = thisReportTime;
@@ -69,6 +71,15 @@ atv.player.playerTimeDidChange = function(time)
                         '&X-Plex-Device-Name=' + encodeURIComponent(atv.device.displayName) +
                         token );
   }
+    
+    // ping transcoder to keep it alive
+    if (isTranscoding &&
+           (lastTranscoderPingTime == -1 || Math.abs(thisReportTime-lastTranscoderPingTime) > 60000)
+           )
+        {
+            lastTranscoderPingTime = thisReportTime;
+            loadPage( baseURL + '/video/:/transcode/universal/ping?session=' + atv.device.udid);
+        }
   
   if (subtitle)
       updateSubtitle(thisReportTime);
@@ -97,90 +108,77 @@ atv.player.didStopPlaying = function()
                       '&X-Plex-Device-Name=' + encodeURIComponent(atv.device.displayName) +
                       token );
     
-  // Kill the session.
-  loadPage(baseURL + '/video/:/transcode/universal/stop?session=' + atv.device.udid);
+    // Kill the transcoder session.
+    if (isTranscoding)
+        {
+            loadPage(baseURL + '/video/:/transcode/universal/stop?session=' + atv.device.udid);
+        }
 };
 
 /*
  * Handle ATV playback will start
  */
-var assettimer = null;
 
 atv.player.willStartPlaying = function()
 {
-    // getTextContent - return empty string if node not existing.
-    function getTextContent(node)
-    {
-        if (node)
-            return node.textContent;
-        else
-            return '';
-    };
     
-  // mediaURL and myMetadata
-  var url = atv.player.asset.getElementByTagName('mediaURL').textContent;
-  var metadata = atv.player.asset.getElementByTagName('myMetadata');
+    // init timer vars
+    lastReportedTime = -1;
+    lastTranscoderPingTime = -1;
+    remainingTime = 0;  // reset remaining time
+    
+    // get baseURL, OSD settings, ...
+    var videoPlayerSettings = atv.player.asset.getElementByTagName('videoPlayerSettings');
+    if (videoPlayerSettings != null)
+        {
+            baseURL = videoPlayerSettings.getTextContent('baseURL');
+            accessToken = videoPlayerSettings.getTextContent('accessToken');
+
+            showClock = videoPlayerSettings.getTextContent('showClock');
+            timeFormat = videoPlayerSettings.getTextContent('timeFormat');
+            clockPosition = videoPlayerSettings.getTextContent('clockPosition');
+            overscanAdjust = videoPlayerSettings.getTextContent('overscanAdjust');
+            showEndtime = videoPlayerSettings.getTextContent('showEndtime');
+            showInfos = videoPlayerSettings.getTextContent('showInfos');
+
+            
+            subtitleSize = videoPlayerSettings.getTextContent('subtitleSize');
+            
+            log('willStartPlaying/getVideoPlayerSettings done');
+
+      }
+    // mediaURL and myMetadata
+    getMetadata();
   
-  // get baseURL, OSD settings, ...
-  if (metadata != null)
+  // Use loadMoreAssets callback for playlists
+  var playlistData = atv.player.asset.getElementByTagName('playlistData');
+  if (playlistData != null)
   {
-    baseURL = getTextContent(metadata.getElementByTagName('baseURL'));
-    accessToken = getTextContent(metadata.getElementByTagName('accessToken'));
-    
-    key = getTextContent(metadata.getElementByTagName('key'));
-    ratingKey = getTextContent(metadata.getElementByTagName('ratingKey'));
-    duration = getTextContent(metadata.getElementByTagName('duration'));
-    videoName = getTextContent(metadata.getElementByTagName('videoTitle'));
-    videoName2 = getTextContent(metadata.getElementByTagName('videoSubtitle'));
-    poster = getTextContent(metadata.getElementByTagName('poster'));
-    showInfos = getTextContent(metadata.getElementByTagName('showInfos'));
-    showClock = getTextContent(metadata.getElementByTagName('showClock'));
-    timeFormat = getTextContent(metadata.getElementByTagName('timeFormat'));
-    clockPosition = getTextContent(metadata.getElementByTagName('clockPosition'));
-    overscanAdjust = getTextContent(metadata.getElementByTagName('overscanAdjust'));
-    showEndtime = getTextContent(metadata.getElementByTagName('showEndtime'));
-    
-    subtitleURL = getTextContent(metadata.getElementByTagName('subtitleURL'));
-    subtitleSize = getTextContent(metadata.getElementByTagName('subtitleSize'));
-    log('willStartPlaying/getMetadata done');
-  }
-  
-  // Use loadMoreAssets callback for playlists - if not transcoding!
-  var stackedMedia = atv.player.asset.getElementByTagName('myStackedMedia');
-  if (stackedMedia != null && url.indexOf('transcode/universal') == -1)
-  {
+      var videoAssets = playlistData.getElementsByTagName('httpFileVideoAsset');
+      
       // determine startTime of stacked parts
       var startTime = 0;
-      var videoAssets = stackedMedia.getElementsByTagName('httpFileVideoAsset');
+      var lastRatingKey = 0;
+      
       for (var i=0;i<videoAssets.length;i++)
       {
+          // reset starttime for new video (not stacked media) - check for change in ratingKey
+          if (lastRatingKey != videoAssets[i].getElementByTagName('ratingKey'))
+              startTime = 0;
+          
           if (videoAssets[i].getElementByTagName('startTime'))
               videoAssets[i].getElementByTagName('startTime').textContent = startTime.toString();
-          startTime += parseInt(getTextContent(videoAssets[i].getElementByTagName('duration')));
+          startTime += parseInt(videoAssets[i].getTextContent('duration'));
+          
+          lastRatingKey == videoAssets[i].getTextContent('ratingKey');
       }
       //todo: work <bookmarkTime> and fix "resume" for stacked media
     
-    atv.player.loadMoreAssets = function(callback) 
-    {
-      assettimer = atv.setInterval(
-        function()
-        {
-          atv.clearInterval(assettimer);
-          
-          var root = atv.player.asset;
-          var videoAssets = root.getElementsByTagName('httpFileVideoAsset');
-          if (videoAssets != null && videoAssets.length > 1)
-            videoAssets.shift();
-          else
-            videoAssets = null;
-          callback.success(videoAssets);
-        } , 1000);
-    }
     log('willStartPlaying/loadMoreAssets done');
   }
   
   // load subtitle - aTV subtitle JSON
-  subtitle = []
+  subtitle = [];
   subtitlePos = 0;
   // when... not transcoding or
   //         transcoding and PMS skips subtitle (dontBurnIn)
@@ -260,11 +258,66 @@ atv.player.willStartPlaying = function()
   containerView.subviews = Views;
   atv.player.overlay = containerView;
   //atv.player.overlay.subviews = Views;
-  
-  remainingTime = 0; // Reset remaining time
-  
+    
   log('willStartPlaying done');
 };
+
+/*
+ * Playlist handling
+ */
+
+var assettimer = null;
+
+atv.player.loadMoreAssets = function(callback)
+{
+    assettimer = atv.setInterval(
+        function()
+        {
+             atv.clearInterval(assettimer);
+                                 
+             var root = atv.player.asset;
+             var videoAssets = root.getElementsByTagName('httpFileVideoAsset');
+             if (videoAssets != null && videoAssets.length > 1)
+                videoAssets.shift();
+             else
+                videoAssets = null;
+             callback.success(videoAssets);
+        
+             log('loadMoreAssets done');
+          } , 1000);
+}
+
+atv.player.currentAssetChanged = function()
+{
+        getMetadata();
+        log('currentAssetChanged done');
+}
+
+
+function getMetadata()
+{
+    // update mediaURL and myMetadata
+    var url = atv.player.asset.getTextContent('mediaURL');
+    isTranscoding = (url.indexOf('transcode/universal') > -1);
+    
+    var metadata = atv.player.asset.getElementByTagName('myMetadata');
+    if (metadata != null)
+        {
+            key = metadata.getTextContent('key');
+            ratingKey = metadata.getTextContent('ratingKey');
+            duration = metadata.getTextContent('duration');
+            
+            // todo: subtitle handling with playlists/stacked media
+            subtitleURL = metadata.getTextContent('subtitleURL');
+            
+            videoName = metadata.getTextContent('videoTitle');
+            videoName2 = metadata.getTextContent('videoSubtitle');
+            poster = metadata.getTextContent('poster');
+            
+            log('updateMetadata/getMetadata done');
+            }
+    log('updateMetadata done');
+    }
 
 
 // atv.Element extensions
@@ -280,6 +333,15 @@ if( atv.Element ) {
 		}
 		return undefined;
 	}
+    
+    // getTextContent - return empty string if node not existing.
+    atv.Element.prototype.getTextContent = function(tagName) {
+        var element = this.getElementByTagName(tagName);
+        if (element && element.textContent)
+            return element.textContent;
+        else
+            return '';
+        }
 }
 
 
@@ -349,8 +411,11 @@ atv.player.playerStateChanged = function(newState, timeIntervalSec) {
   if (newState == 'Paused')
   {
     state = 'paused';
-    pingTimer = atv.setInterval(function() {loadPage( baseURL + '/video/:/transcode/universal/ping?session=' + 
-                                                                  atv.device.udid); }, 60000);
+    if (isTranscoding)
+        {
+            pingTimer = atv.setInterval(
+            function() { loadPage( baseURL + '/video/:/transcode/universal/ping?session=' + atv.device.udid); },60000);
+          }
     showOverlays(0.5);
   }
 

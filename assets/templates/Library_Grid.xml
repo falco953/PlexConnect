@@ -35,8 +35,8 @@
            <items>
              {{COPY(Server:@main/size::0=|1=COPY)}}
              <showcasePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}"  
-                             onPlay="atv.loadURL('{{URL(key)}}')"
-                             onSelect="atv.loadURL('{{URL(key)}}')"
+                             onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{EVAL('{{VAL(scanner)}}'.replace(' ', '_'))}}')"
+                             onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{EVAL('{{VAL(scanner)}}'.replace(' ', '_'))}}')"
                              onHoldSelect="refreshSection('{{VAL(key)}}', '{{URL(refreshKey)}}')">
                    {{COPY(Directory)}}
                    {{VAR(items:NoKey:TRUE)}}
@@ -74,8 +74,8 @@
                         {{VAR(searchKey:searchKey)}}
                         <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" featured="true" 
                                                alwaysShowTitles="{{VAL($sectionicons::Apple=true|Plex=false|Fanart=true)}}"
-                                               onPlay="atv.loadURL('{{URL(key)}}')"
-                                               onSelect="atv.loadURL('{{URL(key)}}')"
+                                               onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{EVAL('{{VAL(scanner)}}'.replace(' ', '_'))}}')"
+                                               onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{EVAL('{{VAL(scanner)}}'.replace(' ', '_'))}}')"
                                                onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
                             {{COPY(Directory)}}
                             {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
@@ -144,8 +144,8 @@
                         {{VAR(searchKey:searchKey)}}
                         <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" featured="true"
                             alwaysShowTitles="{{VAL($sectionicons::Apple=true|Plex=false|Fanart=true)}}"
-                            onPlay="atv.loadURL('{{URL(key)}}')"
-                            onSelect="atv.loadURL('{{URL(key)}}')"
+                            onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{EVAL('{{VAL(scanner)}}'.replace(' ', '_'))}}')"
+                            onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{EVAL('{{VAL(scanner)}}'.replace(' ', '_'))}}')"
                             onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
                             {{COPY(Directory)}}
                             {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
@@ -244,8 +244,8 @@
                         {{VAR(searchKey:searchKey)}}
                         <moviePoster id="{{VAL(key)}}" accessibilityLabel="{{VAL(title)}}" featured="true"
                             alwaysShowTitles="{{VAL($sectionicons::Apple=true|Plex=false|Fanart=true)}}"
-                            onPlay="atv.loadURL('{{URL(key)}}')"
-                            onSelect="atv.loadURL('{{URL(key)}}')"
+                            onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{EVAL('{{VAL(scanner)}}'.replace(' ', '_'))}}')"
+                            onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect={{EVAL('{{VAL(scanner)}}'.replace(' ', '_'))}}')"
                             onHoldSelect="sectionHoldSelect('{{VAL(key)}}', '{{URL(#searchKey)}}', '{{VAL(#serverName)}}', '{{URL(refreshKey)}}', '{{VAL(title)}}')">
                             {{COPY(Directory)}}
                             {{VAR(sections:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->

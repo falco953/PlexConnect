@@ -38,7 +38,7 @@
             
 
               <oneLineMenuItem id="{{VAL(ratingKey)}}"
-                                         onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play')"
+                                         onPlay="atv.loadURL('{{URL()}}&amp;PlexConnect=Play:Continuous:{{VAL(ratingKey)}}')"
                                          onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect=EpisodePrePlay')"
                                          onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenuVideo')">
                 {{COPY(Video:index::=|0 =COPY)}}

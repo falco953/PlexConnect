@@ -363,7 +363,7 @@ def getXMLFromPMS(baseURL, path, options={}, authtoken=''):
     XML = etree.parse(response)
     
     dprint(__name__, 1, "====== received PMS-XML ======")
-    dprint(__name__, 1, prettyXML(XML))
+    dprint(__name__, 1, XML)
     dprint(__name__, 1, "====== PMS-XML finished ======")
     
     #XMLTree = etree.ElementTree(etree.fromstring(response))
@@ -416,13 +416,12 @@ def getXMLFromMultiplePMS(ATV_udid, path, type, options={}):
     root = etree.Element("MediaConverter")
     root.set('friendlyName', type+' Servers')
     
-    if type=='owned':
-        owned='1'
-    elif type=='shared':
-        owned='0'
-    
     for uuid in g_PMS.get(ATV_udid, {}):
-        if getPMSProperty(ATV_udid, uuid, 'owned')==owned:
+        if (type=='all') or \
+            (type=='owned' and getPMSProperty(ATV_udid, uuid, 'owned')=='1') or \
+            (type=='shared' and getPMSProperty(ATV_udid, uuid, 'owned')=='0') or \
+            (type=='local' and getPMSProperty(ATV_udid, uuid, 'local')=='1') or \
+            (type=='remote' and getPMSProperty(ATV_udid, uuid, 'local')=='0'):
             Server = etree.SubElement(root, 'Server')  # create "Server" node
             Server.set('name',    getPMSProperty(ATV_udid, uuid, 'name'))
             Server.set('address', getPMSProperty(ATV_udid, uuid, 'ip'))
@@ -488,13 +487,20 @@ def getXMLFromMultiplePMS(ATV_udid, path, type, options={}):
                     if 'art' in Video.attrib:
                         Video.set('art',    PMS_mark + getURL('', path, Video.get('art')))
                     Server.append(Video)
+
+                for Playlist in XML.getiterator('Playlist'):  # copy "Playlist" content, add PMS to links
+                    key = Playlist.get('key')  # absolute path
+                    Playlist.set('key',    PMS_mark + getURL('', path, key))
+                    if 'composite' in Playlist.attrib:
+                        Playlist.set('composite', PMS_mark + getURL('', path, Playlist.get('composite')))
+                    Server.append(Playlist)
     
     root.set('size', str(len(root.findall('Server'))))
     
     XML = etree.ElementTree(root)
     
     dprint(__name__, 1, "====== Local Server/Sections XML ======")
-    dprint(__name__, 1, prettyXML(XML))
+    dprint(__name__, 1, XML)
     dprint(__name__, 1, "====== Local Server/Sections XML finished ======")
     
     return XML  # XML representation - created "just in time". Do we need to cache it?
@@ -623,7 +629,7 @@ parameters:
 result:
     final path to pull in PMS transcoder
 """
-def getTranscodeVideoPath(path, AuthToken, options, action, quality, subtitle, audio):
+def getTranscodeVideoPath(path, AuthToken, options, action, quality, subtitle, audio, partIndex):
     UDID = options['PlexConnectUDID']
     
     transcodePath = '/video/:/transcode/universal/start.m3u8?'
@@ -648,6 +654,7 @@ def getTranscodeVideoPath(path, AuthToken, options, action, quality, subtitle, a
     args['audioBoost'] = audio['boost']
     args['fastSeek'] = '1'
     args['path'] = path
+    args['partIndex'] = partIndex
     
     xargs = getXArgsDeviceInfo(options)
     xargs['X-Plex-Client-Capabilities'] = "protocols=http-live-streaming,http-mp4-streaming,http-streaming-video,http-streaming-video-720p,http-mp4-video,http-mp4-video-720p;videoDecoders=h264{profile:high&resolution:1080&level:41};audioDecoders=mp3,aac{bitrate:160000}"
