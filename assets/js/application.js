@@ -1,23 +1,29 @@
-// settings for atv.player - communicated in PlayVideo/myMetadata
+// settings for atv.player - communicated in PlayVideo/videoPlayerSettings
 var baseURL;
 var accessToken;
+var showClock, timeFormat, clockPosition, overscanAdjust;
+var showEndtime;
+var subtitleSize;
+
+
+// metadata - communicated in PlayVideo/myMetadata
+var mediaURL;
 var key;
 var videoName;
 var videoName2;
 var poster;
 var ratingKey;
-var duration;
+var duration, partDuration;  // milli-sec (int)
 var showInfos;
-var showClock, timeFormat, clockPosition, overscanAdjust;
-var showEndtime;
-var subtitleURL, subtitleSize;
 var overlaysVisible;
+var subtitleURL;
 
 
 // information for atv.player - computed internally to application.js
 var lastReportedTime = -1;
 var lastTranscoderPingTime = -1;
 var remainingTime = 0;
+var startTime = 0;  // milli-sec
 var isTranscoding = false;
 
 
@@ -48,12 +54,11 @@ function log(msg, level)
   */
 atv.player.playerTimeDidChange = function(time)
 {
-  remainingTime = Math.round((parseInt(duration) / 1000) - time);
+  remainingTime = Math.round((duration / 1000) - time);
   var thisReportTime = Math.round(time*1000)
   
   // correct thisReportTime with startTime if stacked media part
-  if (atv.player.asset.getElementByTagName('startTime'))
-    thisReportTime += parseInt(atv.player.asset.getElementByTagName('startTime').textContent)
+  thisReportTime += startTime;
   
 // report watched time
   if (lastReportedTime == -1 || Math.abs(thisReportTime-lastReportedTime) > 5000)
@@ -64,7 +69,7 @@ atv.player.playerTimeDidChange = function(time)
         token = '&X-Plex-Token=' + accessToken;
     loadPage( baseURL + '/:/timeline?ratingKey=' + ratingKey + 
                         '&key=' + key +
-                        '&duration=' + duration + 
+                        '&duration=' + duration.toString() +
                         '&state=playing' +
                         '&time=' + thisReportTime.toString() + 
                         '&X-Plex-Client-Identifier=' + atv.device.udid + 
@@ -101,7 +106,7 @@ atv.player.didStopPlaying = function()
       token = '&X-Plex-Token=' + accessToken;
   loadPage( baseURL + '/:/timeline?ratingKey=' + ratingKey + 
                       '&key=' + key +
-                      '&duration=' + duration + 
+                      '&duration=' + duration.toString() +
                       '&state=stopped' +
                       '&time=' + lastReportedTime.toString() + 
                       '&X-Plex-Client-Identifier=' + atv.device.udid + 
@@ -126,6 +131,8 @@ atv.player.willStartPlaying = function()
     lastReportedTime = -1;
     lastTranscoderPingTime = -1;
     remainingTime = 0;  // reset remaining time
+    startTime = 0;  // starting time for stacked media subsequent parts
+    //todo: work <bookmarkTime> and fix "resume" for stacked media
     
     // get baseURL, OSD settings, ...
     var videoPlayerSettings = atv.player.asset.getElementByTagName('videoPlayerSettings');
@@ -150,41 +157,14 @@ atv.player.willStartPlaying = function()
     // mediaURL and myMetadata
     getMetadata();
   
-  // Use loadMoreAssets callback for playlists
-  var playlistData = atv.player.asset.getElementByTagName('playlistData');
-  if (playlistData != null)
-  {
-      var videoAssets = playlistData.getElementsByTagName('httpFileVideoAsset');
-      
-      // determine startTime of stacked parts
-      var startTime = 0;
-      var lastRatingKey = 0;
-      
-      for (var i=0;i<videoAssets.length;i++)
-      {
-          // reset starttime for new video (not stacked media) - check for change in ratingKey
-          if (lastRatingKey != videoAssets[i].getElementByTagName('ratingKey'))
-              startTime = 0;
-          
-          if (videoAssets[i].getElementByTagName('startTime'))
-              videoAssets[i].getElementByTagName('startTime').textContent = startTime.toString();
-          startTime += parseInt(videoAssets[i].getTextContent('duration'));
-          
-          lastRatingKey == videoAssets[i].getTextContent('ratingKey');
-      }
-      //todo: work <bookmarkTime> and fix "resume" for stacked media
-    
-    log('willStartPlaying/loadMoreAssets done');
-  }
-  
   // load subtitle - aTV subtitle JSON
   subtitle = [];
   subtitlePos = 0;
   // when... not transcoding or
   //         transcoding and PMS skips subtitle (dontBurnIn)
   if (subtitleURL &&
-       ( url.indexOf('transcode/universal') == -1 ||
-         url.indexOf('transcode/universal') > -1 && url.indexOf('skipSubtitles=1') > -1 )
+      ( !isTranscoding ||
+       isTranscoding && mediaURL.indexOf('skipSubtitles=1') > -1 )
      )
   {
     log("subtitleURL: "+subtitleURL);
@@ -204,6 +184,12 @@ atv.player.willStartPlaying = function()
   }
   
   var Views = [];
+    
+    // Dummy animation to make sure clocks start as hidden
+    var animation = {"type": "BasicAnimation", "keyPath": "opacity",
+                    "fromValue": 0, "toValue": 0, "duration": 0,
+                    "removedOnCompletion": false, "fillMode": "forwards",
+                    "animationDidStop": function(finished) {} };
   
   // Create clock view
   containerView.frame = screenFrame; 
@@ -211,15 +197,24 @@ atv.player.willStartPlaying = function()
   if (showInfos == "True")
   {
       overlay = initOverlay();
-      Views.push(overlay);       
+      Views.push(overlay);
+      overlay.addAnimation(animation, endTimeView);
+      
       overlay2 = initOverlay2();
-      Views.push(overlay2); 
+      Views.push(overlay2);
+      overlay2.addAnimation(animation, endTimeView);
+      
       infoView = initVideoInfoView();
-      Views.push(infoView);     
+      Views.push(infoView);
+      infoView.addAnimation(animation, endTimeView);
+      
       infoView2 = initVideoInfoView2();
-      Views.push(infoView2);       
+      Views.push(infoView2);
+      infoView2.addAnimation(animation, endTimeView);
+      
       posterView = initPosterView();
-      Views.push(posterView); 
+      Views.push(posterView);
+      posterView.addAnimation(animation, endTimeView);
   }
   
     
@@ -227,22 +222,24 @@ atv.player.willStartPlaying = function()
   {
       clockView = initClockView();
       Views.push(clockView);
+      clockView.addAnimation(animation, clockView);
   }
  
-  if (parseInt(duration) > 0 ) // TODO: grab video length from player not library????
+  if (duration > 0 ) // TODO: grab video length from player not library????
   {
     if (showEndtime == "True")
     {
         endTimeView = initEndTimeView();
         Views.push(endTimeView);
+        endTimeView.addAnimation(animation, endTimeView);
     }
   }
   log('willStartPlaying/createClockView done');
   
   // create subtitle view
   if (subtitleURL &&
-       ( url.indexOf('transcode/universal') == -1 ||
-         url.indexOf('transcode/universal') > -1 && url.indexOf('skipSubtitles=1') > -1 )
+      ( !isTranscoding ||
+       isTranscoding && mediaURL.indexOf('skipSubtitles=1') > -1 )
      )
   {
       subtitleView = initSubtitleView();
@@ -257,7 +254,6 @@ atv.player.willStartPlaying = function()
   // Paint the views on Screen.
   containerView.subviews = Views;
   atv.player.overlay = containerView;
-  //atv.player.overlay.subviews = Views;
     
   log('willStartPlaying done');
 };
@@ -289,23 +285,33 @@ atv.player.loadMoreAssets = function(callback)
 
 atv.player.currentAssetChanged = function()
 {
-        getMetadata();
-        log('currentAssetChanged done');
+    // start time for stacked media
+    var lastRatingKey = ratingKey;
+    startTime += partDuration;
+    
+    getMetadata();
+    
+    // reset start time on media change (non-stacked)
+    if (lastRatingKey != ratingKey)
+        startTime = 0;
+    
+    log('currentAssetChanged done');
 }
 
 
 function getMetadata()
 {
     // update mediaURL and myMetadata
-    var url = atv.player.asset.getTextContent('mediaURL');
-    isTranscoding = (url.indexOf('transcode/universal') > -1);
+    mediaURL = atv.player.asset.getTextContent('mediaURL');
+    isTranscoding = (mediaURL.indexOf('transcode/universal') > -1);
     
     var metadata = atv.player.asset.getElementByTagName('myMetadata');
     if (metadata != null)
         {
             key = metadata.getTextContent('key');
             ratingKey = metadata.getTextContent('ratingKey');
-            duration = metadata.getTextContent('duration');
+            duration = parseInt(metadata.getTextContent('duration'));
+            partDuration = parseInt(metadata.getTextContent('partDuration'));
             
             // todo: subtitle handling with playlists/stacked media
             subtitleURL = metadata.getTextContent('subtitleURL');
@@ -439,15 +445,14 @@ atv.player.playerStateChanged = function(newState, timeIntervalSec) {
   var thisReportTime = Math.round(timeIntervalSec*1000);
   
   // correct thisReportTime with startTime if stacked media part
-  if (atv.player.asset.getElementByTagName('startTime'))
-    thisReportTime += parseInt(atv.player.asset.getElementByTagName('startTime').textContent)
+  thisReportTime += startTime;
   
   var token = '';
   if (accessToken!='')
       token = '&X-Plex-Token=' + accessToken;
   loadPage( baseURL + '/:/timeline?ratingKey=' + ratingKey + 
                       '&key=' + key +
-                      '&duration=' + duration + 
+                      '&duration=' + duration.toString() +
                       '&state=' + state + 
                       '&time=' + thisReportTime.toString() + 
                       '&report=1' +

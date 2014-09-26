@@ -41,7 +41,7 @@ def getIP_self():
 
 # initializer for Manager, proxy-ing ATVSettings to WebServer/XMLConverter
 def initProxy():
-    signal.signal(signal.SIGINT, signal.SIG_IGN)
+   signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 
 

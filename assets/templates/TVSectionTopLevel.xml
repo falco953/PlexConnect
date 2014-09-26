@@ -4,7 +4,7 @@
     <script src="{{URL(:/js/updateXML.js)}}" />
   </head>
 	<body>
-		<viewWithNavigationBar id="PlexConnect_Navigation" onNavigate="loadItem(event)" volatile="true" onVolatileReload="updatePage('{{URL()}}&amp;PlexConnect=Plex_Movie_Scanner');">
+		<viewWithNavigationBar id="PlexConnect_Navigation" onNavigate="loadItem(event)" volatile="true" onVolatileReload="updatePage('{{URL()}}&amp;PlexConnect=Plex_Series_Scanner');">
 			<navigation currentIndex="0">
 
 				<navigationItem id="All Shows">
@@ -15,9 +15,9 @@
 				<navigationItem id="On Deck">
 					<title>{{TEXT(On Deck)}}</title>
 					<url>{{URL(key)}}&amp;PlexConnect=TVSection</url>
-				</navigationItem>
+				</navigationItem>{{CUT($tv_navbar_ondeck::unchecked=CUT|checked=)}}
 
-        <navigationItem id="Unwatched">
+                <navigationItem id="Unwatched">
 					<title>{{TEXT(Unwatched)}}</title>
 					<url>{{URL(key)}}/unwatched&amp;PlexConnect=AllShows</url>
 				</navigationItem>{{CUT($tv_navbar_unwatched::unchecked=CUT|checked=)}}
