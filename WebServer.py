@@ -262,8 +262,7 @@ def Run(cmdPipe, param):
     
     setParams(param)
     XMLConverter.setParams(param)
-    cfg = ATVSettings.CATVSettings()
-    XMLConverter.setATVSettings(cfg)
+    XMLConverter.setATVSettings(param['CATVSettings'])
     
     try:
         while True:
@@ -280,9 +279,7 @@ def Run(cmdPipe, param):
         signal.signal(signal.SIGINT, signal.SIG_IGN)  # we heard you!
         dprint(__name__, 0,"^C received.")
     finally:
-        dprint(__name__, 0, "Shutting down.")
-        cfg.saveSettings()
-        del cfg
+        dprint(__name__, 0, "Shutting down (HTTP).")
         server.socket.close()
 
 
@@ -326,6 +323,8 @@ def Run_SSL(cmdPipe, param):
     dprint(__name__, 0, "***")
     
     setParams(param)
+    XMLConverter.setParams(param)
+    XMLConverter.setATVSettings(param['CATVSettings'])
     
     try:
         while True:
@@ -342,7 +341,7 @@ def Run_SSL(cmdPipe, param):
         signal.signal(signal.SIGINT, signal.SIG_IGN)  # we heard you!
         dprint(__name__, 0,"^C received.")
     finally:
-        dprint(__name__, 0, "Shutting down.")
+        dprint(__name__, 0, "Shutting down (HTTPS).")
         server.socket.close()
 
 
@@ -353,6 +352,7 @@ if __name__=="__main__":
     cfg = Settings.CSettings()
     param = {}
     param['CSettings'] = cfg
+    param['CATVSettings'] = ATVSettings.CATVSettings()
     
     param['IP_self'] = '192.168.178.20'  # IP_self?
     param['baseURL'] = 'http://'+ param['IP_self'] +':'+ cfg.getSetting('port_webserver')
