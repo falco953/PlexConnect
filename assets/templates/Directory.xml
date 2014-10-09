@@ -13,26 +13,30 @@
       </header>
       <menu>
         <sections>
-          <menuSection>
-            <items>
 
-              <!-- Directory -->
-              <!-- viewgroup="secondary" -->
-              <!-- content="", "secondary", "items" -->
+          <!-- Directory -->
+          <menuSection>
+          {{CUT(Directory/key:CUT:=)}}
+            <items>
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')">
-                {{COPY(Directory)}}
+              {{COPY(Directory)}}
                 <label>{{VAL(title)}}</label>
                 <preview>
-                  <link>{{URL(key)}}/recentlyAdded?stack=1&amp;X-Plex-Container-Start=0&amp;X-Plex-Container-Size=20&amp;PlexConnect=SectionPreview-{{VAL(type)}}</link>{{CUT(type::a=|photo=CUT|q=)}}
-                  <link>{{URL(key)}}/recentlyAdded?X-Plex-Container-Start=0&amp;X-Plex-Container-Size=20&amp;PlexConnect=SectionPreview-{{VAL(type)}}</link>{{CUT(type:CUT:a=CUT|photo=|q=CUT)}}
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(thumb::768)}}</image>
+                  </crossFadePreview>
                 </preview>
               </oneLineMenuItem>
+            </items>
+          </menuSection>
 
-              <!-- Artist -->
-              <!-- viewgroup="secondary" -->
-              <!-- content="artists" -->
+          <!-- Artist -->
+          <!-- audio V1 -->
+          <menuSection>
+          {{CUT(Artist/key:CUT:=)}}
+            <items>
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')">
@@ -44,10 +48,14 @@
                   </crossFadePreview>
                 </preview>
               </oneLineMenuItem>
+            </items>
+          </menuSection>
 
-              <!-- Album -->
-              <!-- viewgroup=missing, "album" -->
-              <!-- content="albums" -->
+          <!-- Album -->
+          <!-- audio V1 -->
+          <menuSection>
+          {{CUT(Album/key:CUT:=)}}
+            <items>
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')">
@@ -59,10 +67,14 @@
                   </crossFadePreview>
                 </preview>
               </oneLineMenuItem>
+            </items>
+          </menuSection>
 
-              <!-- Playlist -->
-              <!-- viewgroup="playlist" -->
-              <!-- content="playlists" -->
+          <!-- Playlist -->
+          <!-- audio V1 -->
+          <menuSection>
+          {{CUT(Playlist/key:CUT:=)}}
+            <items>
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')">
@@ -75,10 +87,14 @@
                   </crossFadePreview>
                 </preview>
               </oneLineMenuItem>
+            </items>
+          </menuSection>
 
-              <!-- Genre -->
-              <!-- viewgroup="genre" -->
-              <!-- content="genres" -->
+          <!-- Genre -->
+          <!-- audio V1 -->
+          <menuSection>
+          {{CUT(Genre/key:CUT:=)}}
+            <items>
               <oneLineMenuItem id="{{VAL(key)}}"
                                        onPlay="atv.loadURL('{{URL(key)}}')"
                                        onSelect="atv.loadURL('{{URL(key)}}')">
@@ -90,9 +106,171 @@
                   </crossFadePreview>
                 </preview>
               </oneLineMenuItem>
-
             </items>
           </menuSection>
+
+          <!-- Track -->
+          <!-- aTVFirmware<7, iOS<8 -->
+          <!-- content="songs" -->
+          <!-- (viewgroup="track") -->
+          <!-- audio V1 - channels (old style plugin, eg iTunes - single) -->
+          <menuSection>
+          {{CUT(Track/key:CUT:=)}}
+          {{CUT(^aTVFirmwareVersion::=|7=CUT)}}  <!-- watch out: this will make trouble with iOS10 -->
+          {{CUT(content:CUT:=CUT|songs=|songs =CUT)}}
+            <items>
+              <oneLineMenuItem id="{{VAL(key)}}"
+                                       onPlay="atv.loadURL('{{URL())}}&amp;PlexConnect=PlayAudio_plist:Single:{{VAL(ratingKey)}}:0')"
+                                       onSelect="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio_plist:Single:{{VAL(ratingKey)}}:0')">
+              {{COPY(Track)}}
+                <label>{{VAL(track)}}</label>
+                <rightLabel>{{durationToString(NoKey:Audio:totalTime)}}</rightLabel>
+                <ordinal>{{VAL(index)}}</ordinal>{{CUT(index:CUT:0=CUT|0 =)}}
+                <maxOrdinalDigits>2</maxOrdinalDigits>
+                <preview>
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(/thumb::768)}}</image>
+                  </crossFadePreview>
+                </preview>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+
+          <!-- Track -->
+          <!-- aTVFirmware<7, iOS<8 -->
+          <!-- content n/a -->
+          <!-- (viewgroup="track") -->
+          <!-- audio V2 - library - single -->
+          <menuSection>
+          {{CUT(Track/key:CUT:=)}}
+          {{CUT(^aTVFirmwareVersion::=|7=CUT)}}
+          {{CUT(content::=CUT)}}
+            <items>
+              <oneLineMenuItem id="{{VAL(key)}}"
+                                       onPlay="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio_plist:Single:{{VAL(ratingKey)}}:0')"
+                                       onSelect="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio_plist:Single:{{VAL(ratingKey)}}:0')">
+              {{COPY(Track)}}
+                <label>{{VAL(title)}}</label>
+                <rightLabel>{{durationToString(NoKey:Audio:duration)}}</rightLabel>
+                <ordinal>{{VAL(index)}}</ordinal>{{CUT(index:CUT:0=CUT|0 =)}}
+                <maxOrdinalDigits>2</maxOrdinalDigits>
+                <preview>
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(/thumb::768)}}</image>
+                  </crossFadePreview>
+                </preview>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+
+          <!-- Track -->
+          <!-- aTVFirmware>=7, iOS>=8 -->
+          <!-- content="songs" -->
+          <!-- (viewgroup="track") -->
+          <!-- audio V1 - channels (old style plugin, eg iTunes) - playlist-->
+          <menuSection>
+          {{CUT(Track/key:CUT:=)}}
+          {{CUT(^aTVFirmwareVersion::=CUT|7=)}}
+          {{CUT(content:CUT:=CUT|songs=|songs =CUT)}}
+            <items>
+              <!-- shuffle -->
+              <oneLineMenuItem id="shuffle_{{VAL(key)}}"
+                                       onPlay="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio:Shuffle::0')"
+                                       onSelect="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio:Shuffle::0')">
+                <label>Shuffle</label>
+                <accessories>
+                  <shuffle/>
+                </accessories>
+                <preview>
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(thumb::768)}}</image>
+                  </crossFadePreview>
+                </preview>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+          <menuSection>
+          {{CUT(Track/key:CUT:=)}}
+          {{CUT(^aTVFirmwareVersion::=CUT|7=)}}
+          {{CUT(content:CUT:=CUT|songs=|songs =CUT)}}
+            <header>
+              <horizontalDivider alignment="left">
+                <title />
+              </horizontalDivider>
+            </header>
+            <!-- tracks -->
+            <items>
+              <oneLineMenuItem id="{{VAL(key)}}"
+                                       onPlay="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio:Continuous::{{VAL(#copy_ix)}}')"
+                                       onSelect="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio:Single:{{VAL(ratingKey)}}:')">
+              {{COPY(Track)}}
+                <label>{{VAL(track)}}</label>
+                <rightLabel>{{durationToString(NoKey:Audio:totalTime)}}</rightLabel>
+                <ordinal>{{VAL(index)}}</ordinal>{{CUT(index:CUT:0=CUT|0 =)}}
+                <maxOrdinalDigits>2</maxOrdinalDigits>
+                <preview>
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(/thumb::768)}}</image>
+                  </crossFadePreview>
+                </preview>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+
+          <!-- Track -->
+          <!-- aTVFirmware>=7, iOS>=8 -->
+          <!-- content n/a -->
+          <!-- (viewgroup="track") -->
+          <!-- audio V2 - library - playlist -->
+          <menuSection>
+          {{CUT(Track/key:CUT:=)}}
+          {{CUT(^aTVFirmwareVersion::=CUT|7=)}}
+          {{CUT(content::=CUT)}}
+            <items>
+              <!-- shuffle -->
+              <oneLineMenuItem id="shuffle_{{VAL(key)}}"
+                                       onPlay="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio:Shuffle::0')"
+                                       onSelect="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio:Shuffle::0')">
+                <label>Shuffle</label>
+                <accessories>
+                  <shuffle/>
+                </accessories>
+                <preview>
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(thumb::768)}}</image>
+                  </crossFadePreview>
+                </preview>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+          <menuSection>
+          {{CUT(Track/key:CUT:=)}}
+          {{CUT(^aTVFirmwareVersion::=CUT|7=)}}
+          {{CUT(content::=CUT)}}
+            <header>
+              <horizontalDivider alignment="left">
+                <title />
+              </horizontalDivider>
+            </header>
+            <!-- tracks -->
+            <items>
+              <oneLineMenuItem id="{{VAL(key)}}"
+                                       onPlay="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio:Continuous::{{VAL(#copy_ix)}}')"
+                                       onSelect="atv.loadURL('{{URL()}}&amp;PlexConnect=PlayAudio:Single:{{VAL(ratingKey)}}:0')">
+              {{COPY(Track)}}
+                <label>{{VAL(title)}}</label>
+                <rightLabel>{{durationToString(NoKey:Audio:duration)}}</rightLabel>
+                <ordinal>{{VAL(index)}}</ordinal>{{CUT(index:CUT:0=CUT|0 =)}}
+                <maxOrdinalDigits>2</maxOrdinalDigits>
+                <preview>
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(/thumb::768)}}</image>
+                  </crossFadePreview>
+                </preview>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+
         </sections>
       </menu>
     </itemCollectionWithImageHeader>

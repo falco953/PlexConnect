@@ -20,6 +20,31 @@
           
           <menuSection>
             <items>
+              <!-- shuffle -->
+              <oneLineMenuItem id="shuffle_{{VAL(key)}}"
+                                       onPlay="atv.loadURL('{{URL(Video)}}&amp;PlexConnect=Play:Shuffle:{{VAL(Video/ratingKey)}}')"
+                                       onSelect="atv.loadURL('{{URL(Video)}}&amp;PlexConnect=Play:Shuffle:{{VAL(Video/ratingKey)}}')">
+                <label>{{TEXT(Shuffle)}}</label>
+                <accessories>
+                  <shuffle/>
+                </accessories>
+                <preview>
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(thumb::768)}}</image>
+                  </crossFadePreview>
+                </preview>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+          
+          <menuSection>
+            <header>
+              <horizontalDivider alignment="left">
+                <title />
+              </horizontalDivider>
+            </header>
+            
+            <items>
               <__COPY__>
               {{COPY(Video)}}
               
@@ -47,7 +72,7 @@
                       <label>{{VAL(Role/tag)}}{{VAL(Role[2]/tag::=, )}}{{VAL(Role[2]/tag)}}{{VAL(Role[3]/tag::=, )}}{{VAL(Role[3]/tag)}}</label>
                       <label>{{VAL(Director/tag)}}</label>
                       <label>{{VAL(Genre/tag)}}{{VAL(Genre[2]/tag::=, )}}{{VAL(Genre[2]/tag)}}</label>
-                      <label>{{getDurationString(duration)}}</label>
+                      <label>{{durationToString(NoKey:Video:duration)}}</label>
                     </metadataValues>
                   </keyedPreview>
                 </preview>

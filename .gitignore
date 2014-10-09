@@ -15,8 +15,12 @@ PlexConnect.log
 
 *.der
 
+<<<<<<< HEAD
 ATVSettings.py
 
 assets/templates/Library.xml
 
 assets/templates/Library.xml
+=======
+/assets/fanartcache/*.jpg
+>>>>>>> upstream2/master
