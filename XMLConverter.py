@@ -212,7 +212,7 @@ def XML_PMS2aTV(PMS_address, path, options):
             options['PlexConnectCopyIx'] = parts[3]  # copy_ix
         else:
             return XML_Error('PlexConnect','Unexpected "PlayAudio" command syntax')
-
+    
     elif cmd=='PlayVideo_ChannelsV1':
         dprint(__name__, 1, "playing Channels XML Version 1: {0}".format(path))
         auth_token = PlexAPI.getPMSProperty(UDID, PMS_uuid, 'accesstoken')
@@ -346,7 +346,7 @@ def XML_PMS2aTV(PMS_address, path, options):
 
     elif cmd == 'MusicSecondary':
         XMLtemplate = 'MusicSecondary.xml'
-
+    
     elif cmd == 'Directory':
         XMLtemplate = 'Directory.xml'
     
@@ -903,7 +903,9 @@ class CCommandCollection(CCommandHelper):
         # sort by addedAt (updatedAt?)
         if len(tags) > 1:
             itemrange = sorted(itemrange, key=lambda x: x.attrib.get('addedAt'), reverse=True)
+        
         cnt = 0
+        
         for elemSRC in itemrange:
             key = 'COPY'
             if param_enbl!='':
@@ -938,39 +940,38 @@ class CCommandCollection(CCommandHelper):
         playType, leftover, dfltd = self.getKey(src, srcXML, leftover)  # Single (default), Continuous
         key, leftover, dfltd = self.getKey(src, srcXML, leftover)
         param_key = leftover
-
+        
         src, srcXML, tag = self.getBase(src, srcXML, tag)
-
+        
         # walk the src path if neccessary
         while '/' in tag and src!=None:
             parts = tag.split('/',1)
             src = src.find(parts[0])
             tag = parts[1]
-
+    
         # find index of child in elem - to keep consistent order
         for ix, el in enumerate(list(elem)):
             if el==child:
                 break
-
+        
         # filter elements to copy
         cnt = 0
         copy_enbl = False
         elemsSRC = []
         for elemSRC in src.findall(tag):
             child_key, leftover, dfltd = self.getKey(elemSRC, srcXML, param_key)
-
             if not key:
                 copy_enbl = True                           # copy all
             elif playType == 'Continuous' or playType== 'Shuffle':
                 copy_enbl = copy_enbl or (key==child_key)  # [0 0 1 1 1 1]
             else:  # 'Single' (default)
                 copy_enbl = (key==child_key)               # [0 0 1 0 0 0]
-
+            
             if copy_enbl:
                 elemsSRC.append(elemSRC)
-
+        
         # shuffle elements
-       if playType == 'Shuffle':
+        if playType == 'Shuffle':
             if not key:
                 random.shuffle(elemsSRC)                   # shuffle all
             else:
@@ -995,7 +996,7 @@ class CCommandCollection(CCommandHelper):
                 else:
                     elem.insert(ix, el)
                     ix += 1
-        
+
         # remove template child
         elem.remove(child)
         return True  # tree modified, nodes updated: restart from 1st elem
@@ -1454,14 +1455,14 @@ class CCommandCollection(CCommandHelper):
                     min = min%60
                     if hour == 0: return self._("{0:d} Minutes").format(min)
                     else: return self._("{0:d}hr {1:d}min").format(hour, min)
-
+        
         if type == 'Audio':
             secs = int(duration)/1000
             if len(duration) > 0:
                 mins = secs/60
                 secs = secs%60
                 return self._("{0:d}:{1:0>2d}").format(mins, secs)
-
+        
         return ""
     
     def ATTRIB_contentRating(self, src, srcXML, param):
