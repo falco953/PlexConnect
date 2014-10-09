@@ -20,7 +20,7 @@ import os
 import sys
 import traceback
 import inspect
-import string, cgi, time
+import string, random
 import copy  # deepcopy()
 
 try:
@@ -81,20 +81,22 @@ def XML_PlayVideo_ChannelsV1(baseURL, path):
     <mediaURL>' + baseURL + path + '</mediaURL>\n\
     <title>*title*</title>\n\
     <!--bookmarkTime>{{EVAL(int({{VAL(Video/viewOffset:0)}}/1000))}}</bookmarkTime-->\n\
-    <myMetadata>\n\
+    <videoPlayerSettings>\n\
     <!-- PMS, OSD settings, ... -->\n\
     <baseURL>' + baseURL + '</baseURL>\n\
     <accessToken></accessToken>\n\
-    <key></key>\n\
-    <ratingKey></ratingKey>\n\
-    <duration></duration>\n\
     <showClock>False</showClock>\n\
     <timeFormat></timeFormat>\n\
     <clockPosition></clockPosition>\n\
     <overscanAdjust></overscanAdjust>\n\
     <showEndtime>False</showEndtime>\n\
-    <subtitleURL></subtitleURL>\n\
     <subtitleSize></subtitleSize>\n\
+    </videoPlayerSettings>\n\
+    <myMetadata>\n\
+    <key></key>\n\
+    <ratingKey></ratingKey>\n\
+    <duration></duration>\n\
+    <subtitleURL></subtitleURL>\n\
     </myMetadata>\n\
     </httpFileVideoAsset>\n\
     </videoPlayer>\n\
@@ -200,7 +202,17 @@ def XML_PMS2aTV(PMS_address, path, options):
         else:
             return XML_Error('PlexConnect','Unexpected "Play" command syntax')
         XMLtemplate = 'PlayVideo.xml'
-    
+
+    elif cmd.startswith('PlayAudio'):  # PlayAudio: or PlayAudio_plist:
+        parts = cmd.split(':',3)
+        if len(parts)==4:
+            XMLtemplate = parts[0] + '.xml'
+            options['PlexConnectPlayType'] = parts[1]  # Single, Continuous # decoded in PlayAudio.xml
+            options['PlexConnectRatingKey'] = parts[2]  # ratingKey
+            options['PlexConnectCopyIx'] = parts[3]  # copy_ix
+        else:
+            return XML_Error('PlexConnect','Unexpected "PlayAudio" command syntax')
+
     elif cmd=='PlayVideo_ChannelsV1':
         dprint(__name__, 1, "playing Channels XML Version 1: {0}".format(path))
         auth_token = PlexAPI.getPMSProperty(UDID, PMS_uuid, 'accesstoken')
@@ -240,7 +252,7 @@ def XML_PMS2aTV(PMS_address, path, options):
         XMLtemplate = 'PhotoSectionTopLevel.xml'
 
     elif cmd=='Plex_Music_Scanner':
-        XMLtemplate = 'Directory.xml'
+        XMLtemplate = 'MusicSectionTopLevel.xml'
     
     elif cmd=='ScrobbleMenu':
         XMLtemplate = 'ScrobbleMenu.xml'
@@ -325,25 +337,16 @@ def XML_PMS2aTV(PMS_address, path, options):
     
     elif cmd == 'AllShows':
         XMLtemplate = 'Show_'+g_ATVSettings.getSetting(options['PlexConnectUDID'], 'showview').replace(' ','')+'.xml'
-
-    elif cmd == 'Artists':
-        XMLtemplate = 'Music_Artists.xml'
-
-    elif cmd == 'Albums':
-        XMLtemplate = 'Music_Albums.xml'
-
-    elif cmd == 'Tracks':
-        XMLtemplate = 'Music_Tracks.xml'
-    
-    elif cmd == 'AllMusic':
-        XMLtemplate = 'Music_Track.xml'
     
     elif cmd == 'TVSecondary':
         XMLtemplate = 'TVSecondary.xml'
     
     elif cmd == 'PhotoSecondary':
         XMLtemplate = 'PhotoSecondary.xml'
-    
+
+    elif cmd == 'MusicSecondary':
+        XMLtemplate = 'MusicSecondary.xml'
+
     elif cmd == 'Directory':
         XMLtemplate = 'Directory.xml'
     
@@ -375,6 +378,10 @@ def XML_PMS2aTV(PMS_address, path, options):
     
     elif cmd=='SettingsHomeVideos':
         XMLtemplate = 'Settings_HomeVideos.xml'
+        path = ''  # clear path - we don't need PMS-XML
+
+    elif cmd=='SettingsMusic':
+        XMLtemplate = 'Settings_Music.xml'
         path = ''  # clear path - we don't need PMS-XML
     
     elif cmd=='SettingsTopLevel':
@@ -489,9 +496,6 @@ def XML_PMS2aTV(PMS_address, path, options):
             # Movie listing
             XMLtemplate = 'Movie_'+g_ATVSettings.getSetting(options['PlexConnectUDID'], 'movieview').replace(' ','')+'.xml'
     
-    elif PMSroot.get('viewGroup','')=='track':
-        XMLtemplate = 'Music_Track.xml'
-    
     elif PMSroot.get('viewGroup','')=='episode':
         if PMSroot.get('title2')=='On Deck' or \
             PMSroot.get('title2')=='Recently Viewed Episodes' or \
@@ -542,7 +546,7 @@ def XML_PMS2aTV(PMS_address, path, options):
                 bURL.text = channelsearchURL + '&query='
     
     dprint(__name__, 1, "====== generated aTV-XML ======")
-    dprint(__name__, 1, aTVTree)
+    dprint(__name__, 1, aTVroot)
     dprint(__name__, 1, "====== aTV-XML finished ======")
     
     return etree.tostring(aTVroot)
@@ -899,6 +903,7 @@ class CCommandCollection(CCommandHelper):
         # sort by addedAt (updatedAt?)
         if len(tags) > 1:
             itemrange = sorted(itemrange, key=lambda x: x.attrib.get('addedAt'), reverse=True)
+        cnt = 0
         for elemSRC in itemrange:
             key = 'COPY'
             if param_enbl!='':
@@ -909,6 +914,8 @@ class CCommandCollection(CCommandHelper):
             
             if key:
                 self.PMSroot['copy_'+tag] = elemSRC
+                self.variables['copy_ix'] = str(cnt)
+                cnt = cnt+1
                 el = copy.deepcopy(child)
                 XML_ExpandTree(self, el, elemSRC, srcXML)
                 XML_ExpandAllAttrib(self, el, elemSRC, srcXML)
@@ -945,21 +952,38 @@ class CCommandCollection(CCommandHelper):
             if el==child:
                 break
 
-        # duplicate child and add to tree
+        # filter elements to copy
+        cnt = 0
         copy_enbl = False
+        elemsSRC = []
         for elemSRC in src.findall(tag):
             child_key, leftover, dfltd = self.getKey(elemSRC, srcXML, param_key)
 
-            # find first-to-copy src element
-            if playType == 'Continuous':
+            if not key:
+                copy_enbl = True                           # copy all
+            elif playType == 'Continuous' or playType== 'Shuffle':
                 copy_enbl = copy_enbl or (key==child_key)  # [0 0 1 1 1 1]
             else:  # 'Single' (default)
                 copy_enbl = (key==child_key)               # [0 0 1 0 0 0]
 
-            # todo: implement "Shuffle" somewhere around here...
-
             if copy_enbl:
+                elemsSRC.append(elemSRC)
+
+        # shuffle elements
+       if playType == 'Shuffle':
+            if not key:
+                random.shuffle(elemsSRC)                   # shuffle all
+            else:
+                elems = elemsSRC[1:]                       # keep first element fix
+                random.shuffle(elems)
+                elemsSRC = [elemsSRC[0]] + elems
+
+        # duplicate child and add to tree
+        cnt = 0
+        for elemSRC in elemsSRC:
                 self.PMSroot['copy_'+tag] = elemSRC
+                self.variables['copy_ix'] = str(cnt)
+                cnt = cnt+1
                 el = copy.deepcopy(child)
                 XML_ExpandTree(self, el, elemSRC, srcXML)
                 XML_ExpandAllAttrib(self, el, elemSRC, srcXML)
@@ -1417,17 +1441,27 @@ class CCommandCollection(CCommandHelper):
         out = self._("{0:0d}x{1:02d} {2}").format(int(parentIndex), int(index), title)
         return out
     
-    def ATTRIB_getDurationString(self, src, srcXML, param):
-        duration, leftover, dfltd = self.getKey(src, srcXML, param)
-        min = int(duration)/1000/60
-        if g_ATVSettings.getSetting(self.ATV_udid, 'durationformat') == 'Minutes':
-            return self._("{0:d} Minutes").format(min)
-        else:
+    def ATTRIB_durationToString(self, src, srcXML, param):
+        type, leftover, dfltd = self.getKey(src, srcXML, param)
+        duration, leftover, dfltd = self.getKey(src, srcXML, leftover)
+        if type == 'Video':
+            min = int(duration)/1000/60
+            if g_ATVSettings.getSetting(self.ATV_udid, 'durationformat') == 'Minutes':
+                return self._("{0:d} Minutes").format(min)
+            else:
+                if len(duration) > 0:
+                    hour = min/60
+                    min = min%60
+                    if hour == 0: return self._("{0:d} Minutes").format(min)
+                    else: return self._("{0:d}hr {1:d}min").format(hour, min)
+
+        if type == 'Audio':
+            secs = int(duration)/1000
             if len(duration) > 0:
-                hour = min/60
-                min = min%60
-                if hour == 0: return self._("{0:d} Minutes").format(min)
-                else: return self._("{0:d}hr {1:d}min").format(hour, min)
+                mins = secs/60
+                secs = secs%60
+                return self._("{0:d}:{1:0>2d}").format(mins, secs)
+
         return ""
     
     def ATTRIB_contentRating(self, src, srcXML, param):
