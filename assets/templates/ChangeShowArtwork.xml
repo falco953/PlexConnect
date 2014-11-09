@@ -6,16 +6,10 @@
   <body>
     <scroller id="Show_Bookcase">
       <header>
-<<<<<<< HEAD
-        <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=765)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{VAL(title2)}}","{{TEXT(Select Artwork)}}","backgrounds/blank.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","110","","","List")}})}}</image>
-        </imageHeader>
-=======
         <simpleHeader>
           <title>{{VAL(title2)}}</title>
           <subtitle>{{TEXT(Select Posters)}}</subtitle>
         </simpleHeader>
->>>>>>> upstream2/master
       </header>
       
       <items>
