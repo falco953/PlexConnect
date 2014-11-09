@@ -274,6 +274,12 @@ def XML_PMS2aTV(PMS_address, path, options):
     
     elif cmd=='PhotoBrowser':
         XMLtemplate = 'Photo_Browser.xml'
+
+    elif cmd=='ChangeFanart':
+        XMLtemplate = 'ChangeFanart.xml'
+
+    elif cmd=='ChangeFanartVideo':
+        XMLtemplate = 'ChangeFanartVideo.xml'
     
     elif cmd=='MoviePreview':
         XMLtemplate = 'MoviePreview.xml'
@@ -355,6 +361,15 @@ def XML_PMS2aTV(PMS_address, path, options):
     
     elif cmd == 'DirectoryWithPreviewActors':
         XMLtemplate = 'DirectoryWithPreviewActors.xml'
+
+    elif cmd=='Playlists':
+        XMLtemplate = 'Playlists.xml'
+
+    elif cmd=='Playlist_Video':
+        XMLtemplate = 'Playlist_Video.xml'
+
+    elif cmd=='Playlist_Audio':
+        XMLtemplate = 'Playlist_Audio.xml'
     
     elif cmd=='Settings':
         XMLtemplate = 'Settings.xml'
@@ -517,11 +532,8 @@ def XML_PMS2aTV(PMS_address, path, options):
                 # Photo listing / directory
                 XMLtemplate = 'Photo_Directories.xml'
 
-    elif cmd=='Playlists':
-       XMLtemplate = 'Playlists.xml'
-
-    elif cmd=='Playlist_Video':
-        XMLtemplate = 'Playlist_Video.xml'
+    elif PMSroot.get('viewGroup','')=='track':
+        XMLtemplate = "Music_Track.xml"
 
     else:
         XMLtemplate = 'Directory.xml'
@@ -606,7 +618,6 @@ def XML_ExpandNode(CommandCollection, elem, child, src, srcXML, text_tail):
         parts = cmd.split('(',1)
         cmd = parts[0]
         param = parts[1].strip(')')  # remove ending bracket
-        param = XML_ExpandLine(CommandCollection, src, srcXML, param)  # expand any attributes in the parameter
         
         res = False
         if hasattr(CCommandCollection, 'TREE_'+cmd):  # expand tree, work COPY, CUT
@@ -617,6 +628,7 @@ def XML_ExpandNode(CommandCollection, elem, child, src, srcXML, text_tail):
                 child.tail = line
             
             try:
+                param = XML_ExpandLine(CommandCollection, src, srcXML, param)  # expand any attributes in the parameter
                 res = getattr(CommandCollection, 'TREE_'+cmd)(elem, child, src, srcXML, param)
             except:
                 dprint(__name__, 0, "XML_ExpandNode - Error in cmd {0}, line {1}\n{2}", cmd, line, traceback.format_exc())
@@ -684,11 +696,11 @@ def XML_ExpandLine(CommandCollection, src, srcXML, line):
         parts = cmd.split('(',1)
         cmd = parts[0]
         param = parts[1][:-1]  # remove ending bracket
-        param = XML_ExpandLine(CommandCollection, src, srcXML, param)  # expand any attributes in the parameter
         
         if hasattr(CCommandCollection, 'ATTRIB_'+cmd):  # expand line, work VAL, EVAL...
             
             try:
+                param = XML_ExpandLine(CommandCollection, src, srcXML, param)  # expand any attributes in the parameter
                 res = getattr(CommandCollection, 'ATTRIB_'+cmd)(src, srcXML, param)
                 line = line[:cmd_start] + res + line[cmd_end+2:]
                 pos = cmd_start+len(res)

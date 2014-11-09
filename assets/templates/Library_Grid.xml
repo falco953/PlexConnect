@@ -119,7 +119,8 @@
                   {{VAR(items:NoKey:TRUE)}}  <!--within COPY this sets the var to TRUE-->
                   <title>{{VAL(type::movie={{VAL(title)}}|episode={{VAL(grandparentTitle)}})}}</title>
                   <subtitle>{{VAL(type::movie={{VAL(year)}}|episode={{episodestring(parentIndex:0:index:0)}})}}</subtitle>
-                  <image>{{IMAGEURL({{VAL(type::movie=thumb|episode=parentThumb)}}::384)}}</image>
+                  <image>{{IMAGEURL({{VAL(type::movie=thumb|episode=parentThumb)}}::384)}}</image>{{CUT(thumb:CUT:=CUT| =)}}
+                  <image>{{IMAGEURL({{VAL(type::movie=thumb|episode=#parentThumb::384)}}</image>{{CUT(thumb:: =CUT)}}
                   <defaultImage>resource://Poster.png</defaultImage>
                 </moviePoster>
               </items>
