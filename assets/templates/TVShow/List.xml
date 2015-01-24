@@ -1,0 +1,43 @@
+<atv>
+  <head>
+    <script src="{{URL(:/js/utils.js)}}" />
+  </head>
+
+  <body>
+    <itemCollectionWithImageHeader id="Show_List">
+      <header>
+        <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/show.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","500","100","","10","Grid")}})}}</image>
+        </imageHeader>
+      </header>
+      <menu>
+        <sections>
+          <menuSection>
+            <items>
+              <oneLineMenuItem id="{{VAL(key)}}" onPlay="atv.loadURL('{{URL(key:::PlexConnect=TVShow_Season)}}')"
+                                                 onSelect="atv.loadURL('{{URL(key:::PlexConnect=TVShow_Season)}}')"
+                                                 onHoldSelect="scrobbleMenu('{{URL(key:::PlexConnect=Scrobble_Menu)}}')">
+                {{COPY(Directory)}}
+                <label>{{VAL(title)}}</label>
+<<<<<<< HEAD:assets/templates/Show_List.xml
+				<rightLabel>{{unwatchedCountList(leafCount:0:viewedLeafCount:0)}}</rightLabel>{{CUT($showunwatched::False=CUT|True=)}}
+=======
+                <rightLabel>{{unwatchedCountList(leafCount:0:viewedLeafCount:0)}}</rightLabel>{{CUT($showunwatched::False=CUT|True=)}}
+>>>>>>> iBaa/master:assets/templates/TVShow/List.xml
+                <preview>
+                  <crossFadePreview>
+                    <image>{{IMAGEURL(thumb::768)}}</image>
+                  </crossFadePreview>
+                </preview>
+              </oneLineMenuItem>{{CUT(Directory/title:CUT:=)}}
+
+              <oneLineMenuItem id="none">
+                <label>{{TEXT(No Unwatched Shows)}}</label>
+              </oneLineMenuItem>{{CUT(Directory/title::=CUT)}}
+            </items>
+          </menuSection>
+        </sections>
+      </menu>
+    </itemCollectionWithImageHeader>
+  </body>
+</atv>

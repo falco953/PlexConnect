@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atv>
+  <head>
+    <script src="{{URL(:/js/utils.js)}}" />
+    <script src="{{URL(:/js/settings.js)}}" />
+  </head>
+
+  <body>
+    <itemCollectionWithImageHeader id="SettingsPage">
+      <header>
+        <imageHeader>
+          <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=640|1080=960)}}, 0" required="true">
+           {{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{TEXT(Settings)}}"))}}","","backgrounds/settings.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","","9A9A9A","","right","top","300","90","","","List")}})}}
+          </image>
+        </imageHeader>
+      </header>
+      <preview>
+        <keyedPreview>
+          <title>&#x00AD;<!--soft-hyphen--></title>
+          <summary>PlexConnect is a simple way to bring the Plex Client to the Apple TV.</summary>
+          <metadataKeys>
+            <label>{{TEXT(Version)}}</label>
+            <label>{{TEXT(Authors)}}</label>
+            <label>{{TEXT(Wiki/Docs)}}</label>
+            <label>{{TEXT(Homepage)}}</label>
+            <label>{{TEXT(Forum)}}</label>
+          </metadataKeys>
+          <metadataValues>
+            <label>{{EVAL(__VERSION__)}}</label>
+            <label>Baa, roidy</label>
+            <label>f00b4r, meltman</label>
+            <label>https://github.com/ibaa/plexconnect</label>
+            <label>http://forums.plexapp.com/...plexconnect</label>
+          </metadataValues>
+          <image>{{URL(:/thumbnails/PlexConnectLogo.png)}}</image>
+        </keyedPreview>
+      </preview>
+
+      <menu>
+        <sections>
+          
+          <menuSection>
+            <header>
+              <horizontalDivider alignment="left">
+                <title>{{TEXT(Plex Media Server)}}</title>
+              </horizontalDivider>
+            </header>
+            <items>
+              <oneLineMenuItem id="discover" onSelect="discover('discover', 'Settings_Main')">
+                <label>{{TEXT(Discover)}}</label>
+								<rightLabel>Plex Media Servers: {{PMSCOUNT()}}</rightLabel>
+              </oneLineMenuItem>
+              
+							<oneLineMenuItem id="MyPlexSignInOut" onSelect="myPlexSignInOut()">{{CUT($myplex_auth::=| =CUT)}}
+                <label>{{TEXT(MyPlex Sign In)}}</label>
+                <rightLabel></rightLabel>
+                <accessories>
+                  <arrow/>
+                </accessories>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="MyPlexSignInOut" onSelect="myPlexSignInOut()">{{CUT($myplex_auth:CUT:=CUT| =)}}
+                <label>{{TEXT(MyPlex Sign Out)}}</label>
+                <rightLabel>{{SETTING(myplex_user)}}</rightLabel>
+                <accessories></accessories>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+          
+          <menuSection>
+            <header>
+              <horizontalDivider alignment="left">
+                <title>{{TEXT(Appearance)}}</title>
+              </horizontalDivider>
+            </header>
+            <items>
+<<<<<<< HEAD:assets/templates/Settings.xml
+                <oneLineMenuItem id="Top Level" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsTopLevel')">
+                 <label>{{TEXT(Top Level Options)}}</label>
+                 <accessories>
+                   <arrow/>
+                 </accessories>
+               </oneLineMenuItem>
+              <oneLineMenuItem id="LibraryView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsLibrary')">
+                <label>{{TEXT(Library Options)}}</label>
+=======
+              <oneLineMenuItem id="MainNavigation" onSelect="atv.loadURL('{{URL(:/::PlexConnect=Settings_TopLevel)}}')">
+                <label>{{TEXT(Main Navigation)}}</label>
+>>>>>>> iBaa/master:assets/templates/Settings/Main.xml
+                <accessories>
+                  <arrow/>
+                </accessories>
+              </oneLineMenuItem>
+<<<<<<< HEAD:assets/templates/Settings.xml
+                <oneLineMenuItem id="MovieView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsMovies')">
+=======
+              <oneLineMenuItem id="MovieView" onSelect="atv.loadURL('{{URL(:/::PlexConnect=Settings_Movies)}}')">
+>>>>>>> iBaa/master:assets/templates/Settings/Main.xml
+                <label>{{TEXT(Movie Options)}}</label>
+                <accessories>
+                  <arrow/>
+                </accessories>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="ShowView" onSelect="atv.loadURL('{{URL(:/::PlexConnect=Settings_TVShows)}}')">
+                <label>{{TEXT(TV Show Options)}}</label>
+                <accessories>
+                  <arrow/>
+                </accessories>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="HomevideoView" onSelect="atv.loadURL('{{URL(:/::PlexConnect=Settings_HomeVideos)}}')">
+                <label>{{TEXT(Home Video Options)}}</label>
+                <accessories>
+                  <arrow/>
+                </accessories>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="MusicView" onSelect="atv.loadURL('{{URL(:/::PlexConnect=Settings_Music)}}')">
+                <label>{{TEXT(Music Options)}}</label>
+                <accessories>
+                  <arrow/>
+                </accessories>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="VideoOSD" onSelect="atv.loadURL('{{URL(:/::PlexConnect=Settings_VideoOSD)}}')">
+                <label>{{TEXT(Video Player OSD)}}</label>
+                <accessories>
+                  <arrow/>
+                </accessories>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="DurationFormat" onSelect="toggleSettings('DurationFormat', 'Settings_Main')">
+                <label>{{TEXT(Duration Format)}}</label>
+                <rightLabel>{{SETTING(durationformat)}}</rightLabel>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+          
+          <menuSection>
+            <header>
+              <horizontalDivider alignment="left">
+                <title>{{TEXT(Transcoder)}}</title>
+              </horizontalDivider>
+            </header>
+            <items>
+              <oneLineMenuItem id="TranscoderAction" onSelect="toggleSettings('TranscoderAction', 'Settings_Main')">
+                <label>{{TEXT(Transcoder Action)}}</label>
+                <rightLabel>{{SETTING(transcoderaction)}}</rightLabel>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="TranscodeQuality" onSelect="toggleSettings('TranscodeQuality', 'Settings_Main')">
+                <label>{{TEXT(Transcoder Quality)}}</label>
+                <rightLabel>{{SETTING(transcodequality)}}</rightLabel>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="RemoteBitrate" onSelect="toggleSettings('RemoteBitrate', 'Settings_Main')">
+                <label>{{TEXT(Remote Bitrate)}}</label>
+                <rightLabel>{{SETTING(remotebitrate)}}</rightLabel>
+              </oneLineMenuItem>
+<<<<<<< HEAD:assets/templates/Settings.xml
+                <oneLineMenuItem id="PhotoTranscoderAction" onSelect="toggleSettings('PhotoTranscoderAction', 'Settings')">
+                 <label>{{TEXT(Photo Transcoder Action)}}</label>
+                 <rightLabel>{{SETTING(phototranscoderaction)}}</rightLabel>
+               </oneLineMenuItem>
+              <oneLineMenuItem id="SubtitleRenderer" onSelect="toggleSettings('SubtitleRenderer', 'Settings')">
+=======
+              <oneLineMenuItem id="PhotoTranscoderAction" onSelect="toggleSettings('PhotoTranscoderAction', 'Settings_Main')">
+                <label>{{TEXT(Photo Transcoder Action)}}</label>
+                <rightLabel>{{SETTING(phototranscoderaction)}}</rightLabel>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="SubtitleRenderer" onSelect="toggleSettings('SubtitleRenderer', 'Settings_Main')">
+>>>>>>> iBaa/master:assets/templates/Settings/Main.xml
+                <label>{{TEXT(Subtitle Renderer)}}</label>
+                <rightLabel>{{SETTING(subtitlerenderer)}}</rightLabel>
+              </oneLineMenuItem>              
+              <oneLineMenuItem id="SubtitleSize" onSelect="toggleSettings('SubtitleSize', 'Settings_Main')">
+                <label>{{TEXT(Subtitle Size %)}}</label>
+                <rightLabel>{{SETTING(subtitlesize)}}</rightLabel>
+              </oneLineMenuItem>
+              <oneLineMenuItem id="AudioBoost" onSelect="toggleSettings('AudioBoost', 'Settings_Main')">
+                <label>{{TEXT(Audio Boost %)}}</label>
+                <rightLabel>{{SETTING(audioboost)}}</rightLabel>
+              </oneLineMenuItem>
+            </items>
+          </menuSection>
+          
+        </sections>
+      </menu>
+    </itemCollectionWithImageHeader>
+  </body>
+</atv>

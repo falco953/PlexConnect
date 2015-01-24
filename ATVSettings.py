@@ -10,6 +10,7 @@ from Debug import *  # dprint()
 
 
 options = { \
+<<<<<<< HEAD
     'showplaylists'     :('True', 'False'), \
     'showsharedlibrarys':('True', 'False'), \
     'libraryview'            :('Grid', 'List'), \
@@ -30,6 +31,23 @@ options = { \
     'channelview'       :('List', 'Grid', 'Bookcase'), \
     'durationformat'    :('Hours/Minutes', 'Minutes'), \
     'showtitles_library'         :('Highlighted Only', 'Show All'), \
+=======
+    'playlistsview'             :('List', 'Tabbed List', 'Hide'), \
+    'libraryview'               :('List', 'Grid', 'Bookcase', 'Hide'), \
+    'sharedlibrariesview'       :('List', 'Grid', 'Bookcase', 'Hide'), \
+    'channelview'               :('List', 'Tabbed List', 'Grid', 'Bookcase', 'Hide'), \
+    'movieview'                 :('Grid', 'List', 'Detailed List'), \
+    'homevideoview'             :('Grid', 'List', 'Detailed List'), \
+    'actorview'                 :('Movies', 'Portrait'), \
+    'showview'                  :('List', 'Detailed List', 'Grid', 'Bookcase'), \
+    'flattenseason'             :('False', 'True'), \
+    'seasonview'                :('List', 'Coverflow'), \
+    'durationformat'            :('Hours/Minutes', 'Minutes'), \
+    'moviefanart'               :('Hide', 'Show'), \
+    'tvshowfanart'              :('Hide', 'Show'), \
+    'fanart_blur'               :('0', '5', '10', '15', '20'), \
+    'moviepreplay_bottomshelf'  :('Extras', 'Related Movies'), \
+>>>>>>> iBaa/master
     'showtitles_movies'         :('Highlighted Only', 'Show All'), \
     'showtitles_tvshows'        :('Highlighted Only', 'Show All'), \
     'showtitles_homevideos'     :('Highlighted Only', 'Show All'), \

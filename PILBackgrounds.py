@@ -14,10 +14,18 @@ from Version import __VERSION__  # for {{EVAL()}}, display in settings page
 import Settings, ATVSettings
 import PlexAPI
 
+<<<<<<< HEAD
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 from PIL import ImageFilter
+=======
+try:
+    from PIL import Image, ImageFilter
+    __isPILinstalled = True
+except ImportError:
+    __isPILinstalled = False
+>>>>>>> iBaa/master
 
 # Layered Fullscreen Background
 # usage:
@@ -49,6 +57,7 @@ def generate(self, src, srcXML, param):
     stylepath = sys.path[0]+"/assets/templates/"+str(params[0])
     cachefile = createFileHandle(params)
 
+<<<<<<< HEAD
     # Setup Background
     if params[3] != "":
       url = urllib.unquote(params[3])
@@ -70,6 +79,22 @@ def generate(self, src, srcXML, param):
         background = Image.open(stylepath+"/images/blank.jpg")
         background = background.convert('RGB') 
       
+=======
+def generate(PMS_uuid, url, authtoken, resolution, blurRadius):
+    cachepath = sys.path[0]+"/assets/fanartcache"
+    stylepath = sys.path[0]+"/assets/thumbnails"
+
+    # Create cache filename
+    id = re.search('/library/metadata/(?P<ratingKey>\S+)/art/(?P<fileId>\S+)', url)
+    if id:
+        # assumes URL in format "/library/metadata/<ratingKey>/art/fileId>"
+        id = id.groupdict()
+        cachefile = urllib.quote_plus(PMS_uuid +"_"+ id['ratingKey'] +"_"+ id['fileId'] +"_"+ resolution +"_"+ blurRadius) + ".jpg"
+    else:
+        fileid = posixpath.basename(urlparse.urlparse(url).path)
+        cachefile = urllib.quote_plus(PMS_uuid +"_"+ fileid +"_"+ resolution +"_"+ blurRadius) + ".jpg"  # quote: just to make sure...
+    
+>>>>>>> iBaa/master
     # Already created?
     if os.path.isfile(cachepath+"/"+cachefile+".png"):
       return cachefile+".png" # Bye Bye  
@@ -118,6 +143,7 @@ def textToImage(index, im, params, stylepath):
     draw = ImageDraw.Draw(im)
     width, height = draw.textsize(text, ImageFont.truetype(font, int(fontsize)))  
     
+<<<<<<< HEAD
 
      
     if str(params[4])=="poster":
@@ -271,3 +297,87 @@ def is_hex(s):
         if not (char in hex_digits):
             return False
     return True
+=======
+    # No! Request Background from PMS
+    dprint(__name__, 1, 'No Cachefile found. Generating Background.')  # Debug
+    try:
+        dprint(__name__, 1, 'Getting Remote Image.')  # Debug
+        xargs = {}
+        if authtoken:
+            xargs['X-Plex-Token'] = authtoken
+        request = urllib2.Request(url, None, xargs)
+        response = urllib2.urlopen(request).read()
+        background = Image.open(io.BytesIO(response))
+    except urllib2.URLError as e:
+        dprint(__name__, 0, 'URLError: {0} // url: {1}', e.reason, url)
+        return "/thumbnails/Background_blank_" + resolution + ".jpg"
+    except urllib2.HTTPError as e:
+        dprint(__name__, 0, 'HTTPError: {0} {1} // url: {2}', str(e.code), e.msg, url)
+        return "/thumbnails/Background_blank_" + resolution + ".jpg"
+    except IOError as e:
+        dprint(__name__, 0, 'IOError: {0} // url: {1}', str(e), url)
+        return "/thumbnails/Background_blank_" + resolution + ".jpg"
+    
+    blurRadius = int(blurRadius)
+    
+    # Get gradient template
+    dprint(__name__, 1, 'Merging Layers.')  # Debug
+    if resolution == '1080':
+        width = 1920
+        height = 1080
+        blurRegion = (0, 514, 1920, 1080)
+        layer = Image.open(stylepath + "/gradient_1080.png")
+    else:
+        width = 1280
+        height = 720
+        blurRegion = (0, 342, 1280, 720)
+        blurRadius = int(blurRadius / 1.5)
+        layer = Image.open(stylepath + "/gradient_720.png")
+    
+    # Set background resolution and merge layers
+    try:
+        bgWidth, bgHeight = background.size
+        dprint(__name__,1 ,"Background size: {0}, {1}", bgWidth, bgHeight)
+        dprint(__name__,1 , "aTV Height: {0}, {1}", width, height)
+    
+        if bgHeight != height:
+            background = background.resize((width, height), Image.ANTIALIAS)
+            dprint(__name__,1 , "Resizing background")
+        
+        if blurRadius != 0:
+            dprint(__name__,1 , "Blurring Lower Region")
+            imgBlur = background.crop(blurRegion)
+            imgBlur = imgBlur.filter(ImageFilter.GaussianBlur(blurRadius))
+            background.paste(imgBlur, blurRegion)
+            
+        background.paste(layer, ( 0, 0), layer)
+
+    except:
+        dprint(__name__, 0, 'Error - Failed to modify image')
+        return "/thumbnails/Background_blank_" + resolution + ".jpg"
+        
+    try:
+        # Save to Cache
+        background.save(cachepath+"/"+cachefile)
+    except:
+        dprint(__name__, 0, 'Error - Failed to save image file')
+        return "/thumbnails/Background_blank_" + resolution + ".jpg"       
+    
+    dprint(__name__, 1, 'Cachefile  generated.')  # Debug
+    return "/fanartcache/"+cachefile
+
+
+
+# HELPERS
+
+def isPILinstalled():
+    return __isPILinstalled
+
+
+
+if __name__=="__main__":
+    url = "http://thetvdb.com/banners/fanart/original/95451-23.jpg"
+    res = generate('uuid', url, 'authtoken', '1080')
+    res = generate('uuid', url, 'authtoken', '720')
+    dprint(__name__, 0, "Background: {0}", res)
+>>>>>>> iBaa/master

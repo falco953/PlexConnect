@@ -1,0 +1,42 @@
+<atv>
+  <head>
+    <script src="{{URL(:/js/utils.js)}}" />
+  </head>
+
+  <body>
+    <itemDetailWithImageHeader id="com.apple.trailers">
+        <styles>
+          <color name="titleColor">#ce7f1a</color>
+          <color name="metadataColor">#ffffff</color>
+        </styles>
+
+	   <header>
+	     <imageHeader>
+            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=520|1080=780)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(Video/title)}}"))}}","{{EVAL(quote_plus("{{VAL(Video/studio)}}"))}}","backgrounds/channel.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","40","32","FFFFFF","FFFFFF","left","top","350","230","","","Grid")}})}}</image>
+             
+	     </imageHeader>
+	   </header>
+		<rating>{{contentRating(Video/contentRating)}}</rating>
+		<summary>{{VAL(Video/summary)}}</summary>
+		<image style="squarePoster">{{IMAGEURL(Video/thumb::384)}}</image>
+		<defaultImage>resource://Poster.png</defaultImage>
+
+		<centerShelf>
+        <shelf id="centerShelf" columnCount="4" center="true">
+			<sections>
+				<shelfSection>
+					<items>
+						<actionButton id="play" onSelect="atv.loadURL('{{URL(key:::PlexConnect=Play_Video&amp;PlexConnectRatingKey={{VAL_QUOTED(Video/ratingKey)}})}}')">
+							<title>{{TEXT(Play)}}</title>
+							<image>resource://Play.png</image>
+              <focusedImage>resource://PlayFocused.png</focusedImage>
+							<!--<badge></badge>-->
+						</actionButton>
+					</items>
+				</shelfSection>
+			</sections>
+		</shelf>
+		</centerShelf>
+		</itemDetailWithImageHeader>
+	</body>
+</atv>

@@ -1,28 +1,5 @@
-// atv.Document extensions
-if( atv.Document ) {
-  atv.Document.prototype.getElementById = function(id) {
-    var elements = this.evaluateXPath("//*[@id='" + id + "']", this);
-    if ( elements && elements.length > 0 ) {
-      return elements[0];
-    }
-    return undefined;
-  }   
-}
+// Dependency: utils.js
 
-// atv.Element extensions
-if( atv.Element ) {
-  atv.Element.prototype.getElementsByTagName = function(tagName) {
-    return this.ownerDocument.evaluateXPath("descendant::" + tagName, this);
-  }
-
-  atv.Element.prototype.getElementByTagName = function(tagName) {
-    var elements = this.getElementsByTagName(tagName);
-    if ( elements && elements.length > 0 ) {
-      return elements[0];
-    }
-    return undefined;
-  }
-}
 
 // string extension: format()
 // see http://stackoverflow.com/a/4673436
@@ -81,30 +58,61 @@ function toggleSettings(opt, template)
  */
 function discover(opt, template) 
 {
+    gotDiscoverResponse = function(doc)
+    {
+        // request updated settings XML
+        var url = "{{URL(/)}}&PlexConnect="+ template + "&PlexConnectUDID="+atv.device.udid
+        var req = new XMLHttpRequest();
+        req.open('GET', url, false);
+        req.send();
+        doc = req.responseXML;
+        
+        // get "opt" element of fresh XML
+        var newval = doc.getElementById(opt).getElementByTagName("rightLabel");
+        if (!newval) return undefined;  // error - element not found
+        
+        // push new value to display, remove spinner
+        dispval.textContent = newval.textContent;
+        var elem_remove = elem.getElementByTagName("accessories").getElementByTagName("spinner");
+        if (elem_remove) elem_remove.removeFromParent();
+        log("discover done - "+newval.textContent);
+    }
+    
   // get "opt" element of displayed XML
-  var dispval = document.getElementById(opt).getElementByTagName("rightLabel");
+  var elem = document.getElementById(opt);
+  if (!elem) return undefined;  // error - element not found
+  var dispval = elem.getElementByTagName("rightLabel");
   if (!dispval) return undefined;  // error - element not found
+  
+  // clear number of PMSs, show spinner
+  dispval.textContent =  '';
+  if (!elem.getElementByTagName("accessories"))
+  {
+      var elem_add = document.makeElementNamed("accessories");
+      elem.appendChild(elem_add);
+  }
+  var elem_add = document.makeElementNamed("spinner");
+  elem.getElementByTagName("accessories").appendChild(elem_add);
   
   // discover - trigger PlexConnect, ignore response
   var url = "{{URL(/)}}&PlexConnect=Discover&PlexConnectUDID="+atv.device.udid
   var req = new XMLHttpRequest();
-  req.open('GET', url, false);
+  req.onreadystatechange = function()
+  {
+        try
+        {
+            if(req.readyState == 4)
+            {
+                gotDiscoverResponse(req.responseXML)
+            }
+        }
+        catch(e)
+        {
+            req.abort();
+        }
+  }
+  req.open('GET', url, true);
   req.send();
-  
-  // read new XML
-  var url = "{{URL(/)}}&PlexConnect="+ template + "&PlexConnectUDID="+atv.device.udid
-  var req = new XMLHttpRequest();
-  req.open('GET', url, false);
-  req.send();
-  doc=req.responseXML;
-  
-  // get "opt" element of fresh XML
-  var newval = doc.getElementById(opt).getElementByTagName("rightLabel");
-  if (!newval) return undefined;  // error - element not found
-  log("discover done - "+newval.textContent);
-    
-  // push new value to display
-  dispval.textContent = newval.textContent;
 };
 
 /*
@@ -204,7 +212,7 @@ myPlexSignInOut = function()
             var new_myPlexElem = doc.getElementById('MyPlexSignInOut')
             
             // discover
-            discover('discover', 'Settings');
+            discover('discover', 'Settings_Main');
             
             // update MyPlexSignInOut
             hidePict(_myPlexElem, 'spinner');
@@ -213,15 +221,16 @@ myPlexSignInOut = function()
             if (username)
             {
                 setLabel(_myPlexElem, 'rightLabel', username);
-                atv.loadAndSwapURL("{{URL(/PlexConnect.xml)}}&PlexConnectUDID=" + atv.device.udid);
+                log("MyPlex Login - done");
+                
+                updateContextXML();  // open new page to "invalidate" this page/main navbar
             }
             else
             {
                 showPict(_myPlexElem, 'arrow')
                 setLabel(_myPlexElem, 'rightLabel', _failed);
+                log("MyPlex Login - failed");
             }
-            
-            log("MyPlex Login - done");
         };
         
         setLabel(_myPlexElem, 'rightLabel', '');
@@ -233,27 +242,41 @@ myPlexSignInOut = function()
     
     SignOut = function()
     {
-        // logout and get new settings page
-        var url = "{{URL(/)}}" + 
-                  "&PlexConnect=MyPlexLogout" +
-                  "&PlexConnectUDID=" + atv.device.udid
-        var req = new XMLHttpRequest();
-        req.open('GET', url, false);
-        req.send();
-        var doc = req.responseXML;
-        var new_myPlexElem = doc.getElementById('MyPlexSignInOut')
+        doLogout = function()
+        {
+            atv.clearInterval(timer);
+            
+            // logout and get new settings page
+            var url = "{{URL(/)}}" + 
+                      "&PlexConnect=MyPlexLogout" +
+                      "&PlexConnectUDID=" + atv.device.udid
+            var req = new XMLHttpRequest();
+            req.open('GET', url, false);
+            req.send();
+            var doc = req.responseXML;
+            var new_myPlexElem = doc.getElementById('MyPlexSignInOut')
+            
+            // discover
+            discover('discover', 'Settings_Main');
+            
+            // update MyPlexSignInOut
+            hidePict(_myPlexElem, 'spinner');
+            showPict(_myPlexElem, 'arrow');
+            setLabel(_myPlexElem, 'label', getLabel(new_myPlexElem, 'label'));
+            setLabel(_myPlexElem, 'rightLabel', getLabel(new_myPlexElem, 'rightLabel'));
+            
+            log("MyPlex Logout - done");
+            
+            updateContextXML();  // open new page to "invalidate" this page/main navbar
+        };
         
-        // discover
-        discover('discover', 'Settings');
+        log("Signout");
+        setLabel(_myPlexElem, 'rightLabel', '');
+        hidePict(_myPlexElem, 'arrow');
+        showPict(_myPlexElem, 'spinner');
         
-        // update MyPlexSignInOut
-        showPict(_myPlexElem, 'arrow');
-        setLabel(_myPlexElem, 'label', getLabel(new_myPlexElem, 'label'));
-        setLabel(_myPlexElem, 'rightLabel', getLabel(new_myPlexElem, 'rightLabel'));
-        
-        log("MyPlex Logout - done");
-        
-        atv.loadAndSwapURL("{{URL(/PlexConnect.xml)}}&PlexConnectUDID=" + atv.device.udid);
+        // timer: return control to iOS for a limited amount of time to activate spinner
+        var timer = atv.setInterval(doLogout, 100);
     };
     
     

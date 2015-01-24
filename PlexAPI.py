@@ -32,7 +32,7 @@ http://stackoverflow.com/questions/111945/is-there-any-way-to-do-http-put-in-pyt
 import sys
 import struct
 import time
-import urllib2, socket
+import urllib2, socket, StringIO, gzip
 from threading import Thread
 import Queue
 
@@ -78,7 +78,8 @@ def declarePMS(ATV_udid, uuid, name, scheme, ip, port):
                               'baseURL': baseURL,
                               'local': '1',
                               'owned': '1',
-                              'accesstoken': ''
+                              'accesstoken': '',
+                              'enableGzip': False
                             }
 
 def updatePMSProperty(ATV_udid, uuid, tag, value):
@@ -105,7 +106,7 @@ def getPMSFromAddress(ATV_udid, address):
         return ''  # no server known for this aTV
     
     for uuid in g_PMS[ATV_udid]:
-        if address==g_PMS[ATV_udid][uuid].get('ip', None):
+        if address==g_PMS[ATV_udid][uuid].get('address', None):
             return uuid
     return ''  # IP not found
 
@@ -222,7 +223,7 @@ parameters:
 result:
     g_PMS database for ATV_udid
 """
-def discoverPMS(ATV_udid, CSettings, MyPlexToken=''):
+def discoverPMS(ATV_udid, CSettings, IP_self, MyPlexToken=''):
     global g_PMS
     g_PMS[ATV_udid] = {}
     
@@ -246,6 +247,7 @@ def discoverPMS(ATV_udid, CSettings, MyPlexToken=''):
             name = Server.get('name')
             
             declarePMS(ATV_udid, uuid, name, 'http', ip, port)  # dflt: token='', local, owned
+            # todo - check IP to verify "local"?
     
     else:
         # PlexGDM
@@ -317,6 +319,14 @@ def discoverPMS(ATV_udid, CSettings, MyPlexToken=''):
                     updatePMSProperty(ATV_udid, uuid, 'accesstoken', token)
                     updatePMSProperty(ATV_udid, uuid, 'owned', owned)
     
+    # all servers - update enableGzip
+    for uuid in g_PMS.get(ATV_udid, {}):
+        # enable Gzip if not on same host, local&remote PMS depending on setting
+        enableGzip = (not getPMSProperty(ATV_udid, uuid, 'ip')==IP_self) and ( \
+                     (getPMSProperty(ATV_udid, uuid, 'local')=='1' and CSettings.getSetting('allow_gzip_pmslocal')=='True' ) or \
+                     (getPMSProperty(ATV_udid, uuid, 'local')=='0' and CSettings.getSetting('allow_gzip_pmsremote')=='True') )
+        updatePMSProperty(ATV_udid, uuid, 'enableGzip', enableGzip)
+    
     # debug print all servers
     dprint(__name__, 0, "Servers (local+MyPlex): {0}", len(g_PMS[ATV_udid]))
     for uuid in g_PMS[ATV_udid]:
@@ -335,7 +345,7 @@ parameters:
 result:
     returned XML or 'False' in case of error
 """
-def getXMLFromPMS(baseURL, path, options={}, authtoken=''):
+def getXMLFromPMS(baseURL, path, options={}, authtoken='', enableGzip=False):
     xargs = {}
     if not options==None:
         xargs = getXArgsDeviceInfo(options)
@@ -346,6 +356,10 @@ def getXMLFromPMS(baseURL, path, options={}, authtoken=''):
     dprint(__name__, 1, "xargs: {0}", xargs)
     
     request = urllib2.Request(baseURL+path , None, xargs)
+    request.add_header('User-agent', 'PlexConnect')
+    if enableGzip:
+        request.add_header('Accept-encoding', 'gzip')
+    
     try:
         response = urllib2.urlopen(request, timeout=20)
     except urllib2.URLError as e:
@@ -359,8 +373,13 @@ def getXMLFromPMS(baseURL, path, options={}, authtoken=''):
         dprint(__name__, 0, 'Error loading response XML from Plex Media Server')
         return False
     
-    # parse into etree
-    XML = etree.parse(response)
+    if response.info().get('Content-Encoding') == 'gzip':
+        buf = StringIO.StringIO(response.read())
+        file = gzip.GzipFile(fileobj=buf)
+        XML = etree.parse(file)
+    else:
+        # parse into etree
+        XML = etree.parse(response)
     
     dprint(__name__, 1, "====== received PMS-XML ======")
     dprint(__name__, 1, XML.getroot())
@@ -432,9 +451,9 @@ def getXMLFromMultiplePMS(ATV_udid, path, type, options={}):
             
             baseURL = getPMSProperty(ATV_udid, uuid, 'baseURL')
             token = getPMSProperty(ATV_udid, uuid, 'accesstoken')
-            PMS_mark = 'PMS(' + getPMSProperty(ATV_udid, uuid, 'ip') + ')'
+            PMS_mark = 'PMS(' + getPMSProperty(ATV_udid, uuid, 'address') + ')'
             
-            Server.set('searchKey', PMS_mark + getURL('', '', '/SearchForm.xml'))
+            Server.set('searchKey', PMS_mark + getURL('', '', '/Search/Entry.xml'))
             
             # request XMLs, one thread for each
             PMS = { 'baseURL':baseURL, 'path':path, 'options':options, 'token':token, \
@@ -455,7 +474,7 @@ def getXMLFromMultiplePMS(ATV_udid, path, type, options={}):
             
             baseURL = getPMSProperty(ATV_udid, uuid, 'baseURL')
             token = getPMSProperty(ATV_udid, uuid, 'accesstoken')
-            PMS_mark = 'PMS(' + getPMSProperty(ATV_udid, uuid, 'ip') + ')'
+            PMS_mark = 'PMS(' + getPMSProperty(ATV_udid, uuid, 'address') + ')'
             
             if XML==False:
                 Server.set('size',    '0')
