@@ -4,12 +4,13 @@
   </head>
   
   <body>
-    <itemCollectionWithImageHeader id="com.sample.menu-items-with-sections">
+    <listWithPreview id="com.sample.menu-items-with-sections">
     {{CUT(size:CUT:0=CUT|1=)}}
       <header>
-        <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1:Plex Channels)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/channel.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","left","top","","60","","","List")}})}}</image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{VAL(title1:Plex Channels)}}</title>
+          <subtitle>{{VAL(title2)}}</subtitle>
+        </simpleHeader>
       </header>
       <menu>
         <sections>
@@ -90,12 +91,13 @@
           </menuSection>
         </sections>
       </menu>
-    </itemCollectionWithImageHeader>
+    </listWithPreview>
+
     <!--No Items Available-->
     <dialog id="com.sample.error-dialog">
-        {{CUT(size::0=|1=CUT)}}
-        <title>PlexConnect</title>
-        <description>{{TEXT(Plex Media Server: No Items Available)}}</description>
-     </dialog>
+    {{CUT(size::0=|1=CUT)}}
+      <title>PlexConnect</title>
+      <description>{{TEXT(Plex Media Server: No Items Available)}}</description>
+    </dialog>
   </body>
 </atv>

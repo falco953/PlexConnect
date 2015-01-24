@@ -248,7 +248,7 @@ def discoverPMS(ATV_udid, CSettings, IP_self, MyPlexToken=''):
             
             declarePMS(ATV_udid, uuid, name, 'http', ip, port)  # dflt: token='', local, owned
             # todo - check IP to verify "local"?
-    
+
     else:
         # PlexGDM
         PMS_list = PlexGDM()
@@ -318,15 +318,16 @@ def discoverPMS(ATV_udid, CSettings, IP_self, MyPlexToken=''):
                     updatePMSProperty(ATV_udid, uuid, 'local', '0')  # todo - check IP?
                     updatePMSProperty(ATV_udid, uuid, 'accesstoken', token)
                     updatePMSProperty(ATV_udid, uuid, 'owned', owned)
-    
+
     # all servers - update enableGzip
     for uuid in g_PMS.get(ATV_udid, {}):
         # enable Gzip if not on same host, local&remote PMS depending on setting
         enableGzip = (not getPMSProperty(ATV_udid, uuid, 'ip')==IP_self) and ( \
-                     (getPMSProperty(ATV_udid, uuid, 'local')=='1' and CSettings.getSetting('allow_gzip_pmslocal')=='True' ) or \
-                     (getPMSProperty(ATV_udid, uuid, 'local')=='0' and CSettings.getSetting('allow_gzip_pmsremote')=='True') )
+                    (getPMSProperty(ATV_udid, uuid, 'local')=='1' and CSettings.getSetting('allow_gzip_pmslocal')=='True' ) or \
+                    (getPMSProperty(ATV_udid, uuid, 'local')=='0' and CSettings.getSetting('allow_gzip_pmsremote')=='True') )
         updatePMSProperty(ATV_udid, uuid, 'enableGzip', enableGzip)
-    
+
+
     # debug print all servers
     dprint(__name__, 0, "Servers (local+MyPlex): {0}", len(g_PMS[ATV_udid]))
     for uuid in g_PMS[ATV_udid]:
@@ -359,7 +360,7 @@ def getXMLFromPMS(baseURL, path, options={}, authtoken='', enableGzip=False):
     request.add_header('User-agent', 'PlexConnect')
     if enableGzip:
         request.add_header('Accept-encoding', 'gzip')
-    
+
     try:
         response = urllib2.urlopen(request, timeout=20)
     except urllib2.URLError as e:
@@ -373,6 +374,7 @@ def getXMLFromPMS(baseURL, path, options={}, authtoken='', enableGzip=False):
         dprint(__name__, 0, 'Error loading response XML from Plex Media Server')
         return False
     
+    # parse into etree
     if response.info().get('Content-Encoding') == 'gzip':
         buf = StringIO.StringIO(response.read())
         file = gzip.GzipFile(fileobj=buf)
@@ -437,10 +439,10 @@ def getXMLFromMultiplePMS(ATV_udid, path, type, options={}):
     
     for uuid in g_PMS.get(ATV_udid, {}):
         if (type=='all') or \
-            (type=='owned' and getPMSProperty(ATV_udid, uuid, 'owned')=='1') or \
-            (type=='shared' and getPMSProperty(ATV_udid, uuid, 'owned')=='0') or \
-            (type=='local' and getPMSProperty(ATV_udid, uuid, 'local')=='1') or \
-            (type=='remote' and getPMSProperty(ATV_udid, uuid, 'local')=='0'):
+           (type=='owned' and getPMSProperty(ATV_udid, uuid, 'owned')=='1') or \
+           (type=='shared' and getPMSProperty(ATV_udid, uuid, 'owned')=='0') or \
+           (type=='local' and getPMSProperty(ATV_udid, uuid, 'local')=='1') or \
+           (type=='remote' and getPMSProperty(ATV_udid, uuid, 'local')=='0'):
             Server = etree.SubElement(root, 'Server')  # create "Server" node
             Server.set('name',    getPMSProperty(ATV_udid, uuid, 'name'))
             Server.set('address', getPMSProperty(ATV_udid, uuid, 'ip'))
@@ -490,30 +492,30 @@ def getXMLFromMultiplePMS(ATV_udid, path, type, options={}):
                     if 'art' in Dir.attrib:
                         Dir.set('art',    PMS_mark + getURL('', path, Dir.get('art')))
                     Server.append(Dir)
-                    
+
                 for Video in XML.getiterator('Video'):  # copy "Video" content, add PMS to links
                     key = Video.get('key')  # absolute path
                     Video.set('key',    PMS_mark + getURL('', path, key))
                     Video.set('refreshKey', getURL(baseURL, path, key) + '/refresh')
                     if 'thumb' in Video.attrib:
-                        Video.set('thumb',  PMS_mark + getURL('', path, Video.get('thumb')))                    
+                        Video.set('thumb',  PMS_mark + getURL('', path, Video.get('thumb')))
                     if 'grandparentThumb' in Video.attrib:
-                        Video.set('grandparentThumb',  PMS_mark + getURL('', path, Video.get('grandparentThumb'))) 
+                        Video.set('grandparentThumb',  PMS_mark + getURL('', path, Video.get('grandparentThumb')))
                     if 'grandparentKey' in Video.attrib:
-                        Video.set('grandparentKey',  PMS_mark + getURL('', path, Video.get('grandparentKey')))                    
+                        Video.set('grandparentKey',  PMS_mark + getURL('', path, Video.get('grandparentKey')))
                     if 'parentThumb' in Video.attrib:
                         Video.set('parentThumb',  PMS_mark + getURL('', path, Video.get('parentThumb')))
                     if 'art' in Video.attrib:
                         Video.set('art',    PMS_mark + getURL('', path, Video.get('art')))
                     Server.append(Video)
-
+                
                 for Playlist in XML.getiterator('Playlist'):  # copy "Playlist" content, add PMS to links
                     key = Playlist.get('key')  # absolute path
                     Playlist.set('key',    PMS_mark + getURL('', path, key))
                     if 'composite' in Playlist.attrib:
                         Playlist.set('composite', PMS_mark + getURL('', path, Playlist.get('composite')))
                     Server.append(Playlist)
-    
+
     root.set('size', str(len(root.findall('Server'))))
     
     XML = etree.ElementTree(root)
@@ -736,7 +738,6 @@ def getTranscodeImagePath(key, AuthToken, path, width, height):
     
     # This is bogus (note the extra path component) but ATV is stupid when it comes to caching images, it doesn't use querystrings.
     # Fortunately PMS is lenient...
-    # transcodePath = '/photo/:/transcode/' + quote_plus(path)
     transcodePath = '/photo/:/transcode/' +str(width)+'x'+str(height)+ '/' + quote_plus(path)
     
     args = dict()

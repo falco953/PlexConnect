@@ -4,15 +4,11 @@
   </head>
   
   <body>
-<<<<<<< HEAD:assets/templates/Season_List.xml
-    <itemCollectionWithImageHeader id="com.sample.menu-items-with-sections" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
-=======
     <listWithPreview id="com.sample.menu-items-with-sections" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL(:::PlexConnect=TVShow_Season_List)}}')">
->>>>>>> iBaa/master:assets/templates/TVShow/Season_List.xml
       <header>
-       <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","","backgrounds/show.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","500","100","","10","Grid")}})}}</image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{VAL(title2)}}</title>
+        </simpleHeader>
       </header>
       {{VAR(parentThumb:thumb)}}
       <menu>
@@ -44,6 +40,6 @@
           </menuSection>
         </sections>
       </menu>
-    </itemCollectionWithImageHeader>
+    </listWithPreview>
   </body>
 </atv>

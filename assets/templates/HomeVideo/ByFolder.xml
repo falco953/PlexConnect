@@ -6,9 +6,10 @@
   <body>
     <scroller id="com.sample.homevideo-grid" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL(:::PlexConnect=HomeVideoByFolder)}}')">
       <header>
-        <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=765)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","100","","20","Grid")}})}}</image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{VAL(title1)}}</title>
+          <subtitle>{{VAL(title2)}}</subtitle>
+        </simpleHeader>
       </header>
       <items>
         <grid columnCount="5" id="grid_0">
@@ -40,15 +41,12 @@
   
   
 <body>
-<<<<<<< HEAD:assets/templates/HomeVideoByFolder.xml
-    <itemCollectionWithImageHeader id="HomeVideoList" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
-=======
     <listWithPreview id="HomeVideoList" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL(:::PlexConnect=HomeVideo_ByFolder)}}')">
->>>>>>> iBaa/master:assets/templates/HomeVideo/ByFolder.xml
       <header>
-        <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","40","","20","Grid")}})}}</image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{VAL(title1)}}</title>
+          <subtitle>{{VAL(title2)}}</subtitle>
+        </simpleHeader>
       </header>
 
       <menu>
@@ -90,19 +88,16 @@
           </menuSection>
         </sections>
       </menu>
-    </itemCollectionWithImageHeader>
+    </listWithPreview>
   </body>{{CUT($homevideoview::Detailed=CUT|Grid=CUT|List=)}}
   
   <body>
-<<<<<<< HEAD:assets/templates/HomeVideoByFolder.xml
-    <itemCollectionWithImageHeader id="HomeVideo_DetailedList" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}')">
-=======
     <listWithPreview id="HomeVideo_DetailedList" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL(:::PlexConnect=HomeVideo_ByFolder)}}')">
->>>>>>> iBaa/master:assets/templates/HomeVideo/ByFolder.xml
       <header>
-        <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/home.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","40","","20","Grid")}})}}</image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{VAL(title1)}}</title>
+          <subtitle>{{VAL(title2)}}</subtitle>
+        </simpleHeader>
       </header>
 
       <menu>
@@ -157,6 +152,6 @@
           </menuSection>
         </sections>
       </menu>
-    </itemCollectionWithImageHeader>
+    </listWithPreview>
   </body>{{CUT($homevideoview::Detailed=|Grid=CUT|List=CUT)}}
 </atv>

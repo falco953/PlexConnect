@@ -6,18 +6,16 @@
   </head>
 
   <body>
-    <itemCollectionWithImageHeader id="SettingsPage">
+    <listWithPreview id="SettingsPage">
       <header>
-        <imageHeader>
-          <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=640|1080=960)}}, 0" required="true">
-           {{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{TEXT(Settings)}}"))}}","","backgrounds/settings.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","","9A9A9A","","right","top","300","90","","","List")}})}}
-          </image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{TEXT(Settings)}}</title>
+        </simpleHeader>
       </header>
       <preview>
         <keyedPreview>
           <title>&#x00AD;<!--soft-hyphen--></title>
-          <summary>PlexConnect is a simple way to bring the Plex Client to the Apple TV.</summary>
+          <summary/>
           <metadataKeys>
             <label>{{TEXT(Version)}}</label>
             <label>{{TEXT(Authors)}}</label>
@@ -32,7 +30,7 @@
             <label>https://github.com/ibaa/plexconnect</label>
             <label>http://forums.plexapp.com/...plexconnect</label>
           </metadataValues>
-          <image>{{URL(:/thumbnails/PlexConnectLogo.png)}}</image>
+          <image>{{URL(:/thumbnails/PlexConnectLogo.jpg)}}</image>
         </keyedPreview>
       </preview>
 
@@ -73,28 +71,13 @@
               </horizontalDivider>
             </header>
             <items>
-<<<<<<< HEAD:assets/templates/Settings.xml
-                <oneLineMenuItem id="Top Level" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsTopLevel')">
-                 <label>{{TEXT(Top Level Options)}}</label>
-                 <accessories>
-                   <arrow/>
-                 </accessories>
-               </oneLineMenuItem>
-              <oneLineMenuItem id="LibraryView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsLibrary')">
-                <label>{{TEXT(Library Options)}}</label>
-=======
               <oneLineMenuItem id="MainNavigation" onSelect="atv.loadURL('{{URL(:/::PlexConnect=Settings_TopLevel)}}')">
                 <label>{{TEXT(Main Navigation)}}</label>
->>>>>>> iBaa/master:assets/templates/Settings/Main.xml
                 <accessories>
                   <arrow/>
                 </accessories>
               </oneLineMenuItem>
-<<<<<<< HEAD:assets/templates/Settings.xml
-                <oneLineMenuItem id="MovieView" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=SettingsMovies')">
-=======
               <oneLineMenuItem id="MovieView" onSelect="atv.loadURL('{{URL(:/::PlexConnect=Settings_Movies)}}')">
->>>>>>> iBaa/master:assets/templates/Settings/Main.xml
                 <label>{{TEXT(Movie Options)}}</label>
                 <accessories>
                   <arrow/>
@@ -150,19 +133,11 @@
                 <label>{{TEXT(Remote Bitrate)}}</label>
                 <rightLabel>{{SETTING(remotebitrate)}}</rightLabel>
               </oneLineMenuItem>
-<<<<<<< HEAD:assets/templates/Settings.xml
-                <oneLineMenuItem id="PhotoTranscoderAction" onSelect="toggleSettings('PhotoTranscoderAction', 'Settings')">
-                 <label>{{TEXT(Photo Transcoder Action)}}</label>
-                 <rightLabel>{{SETTING(phototranscoderaction)}}</rightLabel>
-               </oneLineMenuItem>
-              <oneLineMenuItem id="SubtitleRenderer" onSelect="toggleSettings('SubtitleRenderer', 'Settings')">
-=======
               <oneLineMenuItem id="PhotoTranscoderAction" onSelect="toggleSettings('PhotoTranscoderAction', 'Settings_Main')">
                 <label>{{TEXT(Photo Transcoder Action)}}</label>
                 <rightLabel>{{SETTING(phototranscoderaction)}}</rightLabel>
               </oneLineMenuItem>
               <oneLineMenuItem id="SubtitleRenderer" onSelect="toggleSettings('SubtitleRenderer', 'Settings_Main')">
->>>>>>> iBaa/master:assets/templates/Settings/Main.xml
                 <label>{{TEXT(Subtitle Renderer)}}</label>
                 <rightLabel>{{SETTING(subtitlerenderer)}}</rightLabel>
               </oneLineMenuItem>              
@@ -179,6 +154,6 @@
           
         </sections>
       </menu>
-    </itemCollectionWithImageHeader>
+    </listWithPreview>
   </body>
 </atv>

@@ -4,18 +4,9 @@
   </head>
 
   <body>
-    <itemDetailWithImageHeader id="com.apple.trailers">
-        <styles>
-          <color name="titleColor">#ce7f1a</color>
-          <color name="metadataColor">#ffffff</color>
-        </styles>
-
-	   <header>
-	     <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=520|1080=780)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(Video/title)}}"))}}","{{EVAL(quote_plus("{{VAL(Video/studio)}}"))}}","backgrounds/channel.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","40","32","FFFFFF","FFFFFF","left","top","350","230","","","Grid")}})}}</image>
-             
-	     </imageHeader>
-	   </header>
+    <itemDetail id="com.apple.trailers">
+		<title>{{VAL(Video/title)}}</title>
+		<subtitle>{{VAL(Video/studio)}}</subtitle>
 		<rating>{{contentRating(Video/contentRating)}}</rating>
 		<summary>{{VAL(Video/summary)}}</summary>
 		<image style="squarePoster">{{IMAGEURL(Video/thumb::384)}}</image>
@@ -37,6 +28,6 @@
 			</sections>
 		</shelf>
 		</centerShelf>
-		</itemDetailWithImageHeader>
+		</itemDetail>
 	</body>
 </atv>

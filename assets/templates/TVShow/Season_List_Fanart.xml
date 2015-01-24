@@ -12,11 +12,7 @@
       <header>
         <imageHeader>
             <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=440|1080=700)}}, 0" required="true">
-                {{URL(:/fanartcache/{{getBackground({{EVAL({                
-                    'title'       : "{{EVAL(quote_plus("{{VAL(parentTitle)}}"))}}",\
-                    'image'       : "{{IMAGEURL(art:::)}}", 
-                    'resolution' : "{{VAL(^aTVScreenResolution)}}" \
-                    })}})}})}}
+                {{BACKGROUNDURL(art::season_coverflow:{{EVAL(quote_plus("{{VAL(title2)}}"))}}:{{EVAL(quote_plus("{{VAL(title1)}}"))}}:50:24:FFFFFF:center:bottom:0:175:-60:0:100)}}
             </image>
         </imageHeader>
       </header>
@@ -40,8 +36,8 @@
                   <longDescriptionPreview>
                     <title>{{VAL(title)}}</title>
                     <summary><![CDATA[{{VAL(/summary)}}]]></summary>
-                    <image required="true">{{IMAGEURL(thumb::800)}}</image>
-
+                    <image>{{IMAGEURL(thumb::768)}}</image>{{CUT(thumb:CUT:=CUT| =)}}
+                    <image>{{IMAGEURL(#parentThumb::768)}}</image>{{CUT(thumb:: =CUT)}}
                     <metadata>
                       <mainLabel>{{VAL(/parentTitle)}}</mainLabel>
                       <label>{{VAL(/parentYear)}}</label>

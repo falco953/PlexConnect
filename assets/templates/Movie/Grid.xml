@@ -7,24 +7,23 @@
     <scroller id="com.sample.movie-grid">
     {{CUT(size:CUT:0=CUT|1=)}}
       <header>
-        <imageHeader>
-          <!--<image insets="25, 0, 0, 0" required="true">{{URL(:/thumbnails/moviestext{{VAL(^aTVScreenResolution)}}.jpg)}}</image>-->
-        <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=510|1080=765)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/movie.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","","100","","10","Grid")}})}}</image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{VAL(title1)}}</title>
+          <subtitle>{{VAL(title2)}}</subtitle>
+        </simpleHeader>
       </header>
       <items>
-        <grid columnCount="7" id="grid_0">
+        <grid columnCount="6" id="grid_0">
           <items>
-            <moviePoster id="{{VAL(key)}}" alwaysShowTitles="{{VAL($showtitles_movies::Highlighted Only=false|Show All=true)}}"
+            <goldenPoster id="{{VAL(key)}}" alwaysShowTitles="{{VAL($showtitles_movies::Highlighted Only=false|Show All=true)}}"
                              onPlay="atv.loadURL('{{URL(key:::PlexConnect=Play_Video&amp;PlexConnectRatingKey={{VAL(ratingKey)}})}}')"
                              onSelect="atv.loadURL('{{URL(key:::includeExtras=1&amp;PlexConnect=Movie_PrePlay{{VAL($moviefanart::Hide=|Show=_Fanart)}})}}')"
                              onHoldSelect="scrobbleMenu('{{URL(key:::PlexConnect=Scrobble_MenuVideo)}}')">
               {{COPY(Video)}}
-              <title>{{VAL(title)}}</title>
-              <subtitle>{{VAL(year:&#x00AD;)}}</subtitle>
-              <image>{{IMAGEURL(thumb::384)}}</image>
+              <title>{{VAL(title)}} ({{VAL(year:&#x00AD;)}})</title>
+              <image>{{IMAGEURL(thumb::768)}}</image>
               <defaultImage>resource://Poster.png</defaultImage>
-            </moviePoster>
+            </goldenPoster>
           </items>
         </grid>
       </items>

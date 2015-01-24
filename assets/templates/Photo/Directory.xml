@@ -7,18 +7,14 @@
   {{VAR(foundDirectories:NoKey:FALSE)}}  <!--this sets the var to FALSE-->
   
   <body>
-<<<<<<< HEAD:assets/templates/Photo_Directories.xml
-    <!-- list Photo directories -->
-    <itemCollectionWithImageHeader id="com.sample.menu-items-with-sections">
-=======
     <!-- List Photo directories -->
     <listWithPreview id="com.sample.menu-items-with-sections">
 
->>>>>>> iBaa/master:assets/templates/Photo/Directory.xml
       <header>
-       <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/photo.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","center","top","500","100","","10","Grid")}})}}</image>
-        </imageHeader>
+       <simpleHeader>
+          <title>{{VAL(title1:Plex Library)}}</title>
+          <subtitle>{{VAL(title2)}}</subtitle>
+        </simpleHeader>
       </header>
       
       <menu>
@@ -51,11 +47,6 @@
           </menuSection>
         </sections>
       </menu>
-<<<<<<< HEAD:assets/templates/Photo_Directories.xml
-    </itemCollectionWithImageHeader>
-
-  </body>
-=======
       
     </listWithPreview>
   </body>{{CUT(#foundDirectories::FALSE=CUT|TRUE=)}}  <!--CUT if no directories found-->
@@ -63,5 +54,4 @@
   <!--  ONLY PHOTOS   -->
   <redirect template="Photo/Browser.xml" />{{CUT(#foundDirectories:CUT:FALSE=|TRUE=CUT)}}  <!--CUT if directories found-->
   
->>>>>>> iBaa/master:assets/templates/Photo/Directory.xml
 </atv>

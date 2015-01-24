@@ -4,13 +4,8 @@
     <script src="{{URL(:/js/updateXML.js)}}" />
   </head>
 	<body>
-<<<<<<< HEAD:assets/templates/TVSectionTopLevel.xml
-		<viewWithNavigationBar id="PlexConnect_Navigation" onNavigate="loadItem(event)" volatile="true" onVolatileReload="updatePage('{{URL()}}&amp;PlexConnect=Plex_Series_Scanner');">
-			<navigation currentIndex="0">
-=======
 		<viewWithNavigationBar id="PlexConnect_Navigation" onNavigate="loadItem(event)" volatile="true" onVolatileReload="updatePage('{{URL(:::PlexConnect=Plex_Series_Scanner')}});">
 			<navigation currentIndex="{{VAL($tv_navbar_ondeck:0:unchecked=0|checked=1)}}">
->>>>>>> iBaa/master:assets/templates/TVShow/NavigationBar.xml
 
 				<navigationItem id="All Shows">
 					<title>{{TEXT(All Shows)}}</title>
@@ -22,7 +17,7 @@
 					<url>{{URL(key:::PlexConnect=TVShow_OnDeck)}}</url>
 				</navigationItem>{{CUT($tv_navbar_ondeck::unchecked=CUT|checked=)}}
 
-                <navigationItem id="Unwatched">
+        <navigationItem id="Unwatched">
 					<title>{{TEXT(Unwatched)}}</title>
 					<url>{{URL(key::/unwatched:PlexConnect=TVShow_{{EVAL('{{VAL($showview)}}'.replace(' ', ''))}})}}</url>
 				</navigationItem>{{CUT($tv_navbar_unwatched::unchecked=CUT|checked=)}}

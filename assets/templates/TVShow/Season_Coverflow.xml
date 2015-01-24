@@ -6,50 +6,36 @@
   <body>
     <scroller id="com.sample.menu-items-with-sections" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL(:::PlexConnect=TVShow_Season_Coverflow)}}')">
       <header>
-    <!--Fullscreen-->
-        <imageHeader>
-            <!--<image insets="650, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(art:::)}}&amp;gradient=seasons&amp;hd=1080</image>-->
-           <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=580|1080=900)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{IMAGEURL(art:::)}}","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","24","63E4CF","FFFFFF","center","bottom","","180","","20","List")}})}}</image>
-
-        </imageHeader>
-
+        <simpleHeader>
+          <title>{{VAL(title2)}}</title>
+        </simpleHeader>
       </header>
       {{VAR(parentThumb:thumb)}}
       <items>
-        <shelf id="coverflow" columnCount="{{EVAL(min({{VAL(size:0)}},4))}}">
+      <collectionDivider alignment="left">
+            <title></title>
+        </collectionDivider>
+        <shelf id="coverflow" columnCount="{{EVAL(min({{VAL(size:0)}},5))}}">
           <sections>
             <shelfSection>
               <items>
-<<<<<<< HEAD:assets/templates/Season_Coverflow.xml
-                <goldenPoster id="{{VAL(key)}}" featured="true" alwaysShowTitles="{{VAL($showtitles_tvshows::Highlighted Only=false|Show All=true)}}"
-                              onPlay="atv.loadURL('{{URL(key)}}')"
-                              onSelect="atv.loadURL('{{URL(key)}}')"
-                              onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenu')">
-=======
                 <goldenPoster id="{{VAL(key)}}" alwaysShowTitles="{{VAL($showtitles_tvshows::Highlighted Only=false|Show All=true)}}"
                               onPlay="atv.loadURL('{{URL(key:::PlexConnect=TVShow_Episode_List{{VAL($tvshowfanart::Hide=|Show=_Fanart)}})}}')"
                               onSelect="atv.loadURL('{{URL(key:::PlexConnect=TVShow_Episode_List{{VAL($tvshowfanart::Hide=|Show=_Fanart)}})}}')"
                               onHoldSelect="scrobbleMenu('{{URL(key:::PlexConnect=Scrobble_Menu)}}')">
->>>>>>> iBaa/master:assets/templates/TVShow/Season_Coverflow.xml
                   {{COPY(Directory)}}
                   <title>{{VAL(title)}}</title>
                   <image>{{IMAGEURL(thumb::768)}}</image>{{CUT(thumb:CUT:=CUT| =)}}
                   <image>{{IMAGEURL(#parentThumb::768)}}</image>{{CUT(thumb:: =CUT)}}
                   <defaultImage>resource://Poster.png</defaultImage>
-<<<<<<< HEAD:assets/templates/Season_Coverflow.xml
-                </goldenPoster><!--{{CUT(Directory/title:CUT:=|All episodes=CUT)}}-->
-                  
-                <!--<oneLineMenuItem id="none">
-                  <label>No Seasons</label>
-                </oneLineMenuItem>{{CUT(Directory/title::=CUT)}}-->
-=======
                 </goldenPoster>{{CUT(Directory/title:CUT:=)}}
->>>>>>> iBaa/master:assets/templates/TVShow/Season_Coverflow.xml
               </items>
             </shelfSection>
           </sections>
         </shelf>
-       
+        <collectionDivider alignment="left">
+            <title></title>
+        </collectionDivider>
       </items>
     </scroller>
   </body>

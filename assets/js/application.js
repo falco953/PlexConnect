@@ -9,14 +9,14 @@ var subtitleSize;
 // metadata - communicated in PlayVideo/myMetadata
 var mediaURL;
 var key;
+var ratingKey;
+var duration, partDuration;  // milli-sec (int)
+var subtitleURL;
 var videoName;
 var videoName2;
 var poster;
-var ratingKey;
-var duration, partDuration;  // milli-sec (int)
 var showInfos;
 var overlaysVisible;
-var subtitleURL;
 
 
 // information for atv.player - computed internally to application.js
@@ -25,6 +25,7 @@ var lastTranscoderPingTime = -1;
 var remainingTime = 0;
 var startTime = 0;  // milli-sec
 var isTranscoding = false;
+
 
 
 /*
@@ -60,7 +61,7 @@ atv.player.playerTimeDidChange = function(time)
   // correct thisReportTime with startTime if stacked media part
   thisReportTime += startTime;
   
-// report watched time
+  // report watched time
   if (lastReportedTime == -1 || Math.abs(thisReportTime-lastReportedTime) > 5000)
   {
     lastReportedTime = thisReportTime;
@@ -69,22 +70,22 @@ atv.player.playerTimeDidChange = function(time)
         token = '&X-Plex-Token=' + accessToken;
     loadPage( baseURL + '/:/timeline?ratingKey=' + ratingKey + 
                         '&key=' + key +
-                        '&duration=' + duration.toString() +
+                        '&duration=' + duration.toString() + 
                         '&state=playing' +
                         '&time=' + thisReportTime.toString() + 
                         '&X-Plex-Client-Identifier=' + atv.device.udid + 
                         '&X-Plex-Device-Name=' + encodeURIComponent(atv.device.displayName) +
                         token );
   }
-    
-    // ping transcoder to keep it alive
-    if (isTranscoding &&
-           (lastTranscoderPingTime == -1 || Math.abs(thisReportTime-lastTranscoderPingTime) > 60000)
-           )
-        {
-            lastTranscoderPingTime = thisReportTime;
-            loadPage( baseURL + '/video/:/transcode/universal/ping?session=' + atv.device.udid);
-        }
+  
+  // ping transcoder to keep it alive
+  if (isTranscoding &&
+       (lastTranscoderPingTime == -1 || Math.abs(thisReportTime-lastTranscoderPingTime) > 60000)
+     )
+  {
+    lastTranscoderPingTime = thisReportTime;
+    loadPage( baseURL + '/video/:/transcode/universal/ping?session=' + atv.device.udid);
+  }
   
   if (subtitle)
       updateSubtitle(thisReportTime);
@@ -106,27 +107,25 @@ atv.player.didStopPlaying = function()
       token = '&X-Plex-Token=' + accessToken;
   loadPage( baseURL + '/:/timeline?ratingKey=' + ratingKey + 
                       '&key=' + key +
-                      '&duration=' + duration.toString() +
+                      '&duration=' + duration.toString() + 
                       '&state=stopped' +
                       '&time=' + lastReportedTime.toString() + 
                       '&X-Plex-Client-Identifier=' + atv.device.udid + 
                       '&X-Plex-Device-Name=' + encodeURIComponent(atv.device.displayName) +
                       token );
     
-    // Kill the transcoder session.
-    if (isTranscoding)
-        {
-            loadPage(baseURL + '/video/:/transcode/universal/stop?session=' + atv.device.udid);
-        }
+  // Kill the transcoder session.
+  if (isTranscoding)
+  {
+    loadPage(baseURL + '/video/:/transcode/universal/stop?session=' + atv.device.udid);
+  }
 };
 
 /*
  * Handle ATV playback will start
  */
-
 atv.player.willStartPlaying = function()
 {
-    
     // init timer vars
     lastReportedTime = -1;
     lastTranscoderPingTime = -1;
@@ -137,34 +136,32 @@ atv.player.willStartPlaying = function()
     // get baseURL, OSD settings, ...
     var videoPlayerSettings = atv.player.asset.getElementByTagName('videoPlayerSettings');
     if (videoPlayerSettings != null)
-        {
-            baseURL = videoPlayerSettings.getTextContent('baseURL');
-            accessToken = videoPlayerSettings.getTextContent('accessToken');
-
-            showClock = videoPlayerSettings.getTextContent('showClock');
-            timeFormat = videoPlayerSettings.getTextContent('timeFormat');
-            clockPosition = videoPlayerSettings.getTextContent('clockPosition');
-            overscanAdjust = videoPlayerSettings.getTextContent('overscanAdjust');
-            showEndtime = videoPlayerSettings.getTextContent('showEndtime');
-            showInfos = videoPlayerSettings.getTextContent('showInfos');
-
-            
-            subtitleSize = videoPlayerSettings.getTextContent('subtitleSize');
-            
-            log('willStartPlaying/getVideoPlayerSettings done');
-
-      }
+    {
+        baseURL = videoPlayerSettings.getTextContent('baseURL');
+        accessToken = videoPlayerSettings.getTextContent('accessToken');
+        
+        showClock = videoPlayerSettings.getTextContent('showClock');
+        timeFormat = videoPlayerSettings.getTextContent('timeFormat');
+        clockPosition = videoPlayerSettings.getTextContent('clockPosition');
+        overscanAdjust = videoPlayerSettings.getTextContent('overscanAdjust');
+        showEndtime = videoPlayerSettings.getTextContent('showEndtime');
+        showInfos = videoPlayerSettings.getTextContent('showInfos');
+        
+        subtitleSize = videoPlayerSettings.getTextContent('subtitleSize');
+        log('willStartPlaying/getVideoPlayerSettings done');
+    }
+    
     // mediaURL and myMetadata
     getMetadata();
-  
+    
   // load subtitle - aTV subtitle JSON
   subtitle = [];
   subtitlePos = 0;
   // when... not transcoding or
   //         transcoding and PMS skips subtitle (dontBurnIn)
   if (subtitleURL &&
-      ( !isTranscoding ||
-       isTranscoding && mediaURL.indexOf('skipSubtitles=1') > -1 )
+       ( !isTranscoding ||
+         isTranscoding && mediaURL.indexOf('skipSubtitles=1') > -1 )
      )
   {
     log("subtitleURL: "+subtitleURL);
@@ -184,62 +181,55 @@ atv.player.willStartPlaying = function()
   }
   
   var Views = [];
-    
-    // Dummy animation to make sure clocks start as hidden
-    var animation = {"type": "BasicAnimation", "keyPath": "opacity",
-                    "fromValue": 0, "toValue": 0, "duration": 0,
-                    "removedOnCompletion": false, "fillMode": "forwards",
-                    "animationDidStop": function(finished) {} };
+  // Dummy animation to make sure clocks start as hidden
+  var animation = {"type": "BasicAnimation", "keyPath": "opacity",
+                  "fromValue": 0, "toValue": 0, "duration": 0,
+                  "removedOnCompletion": false, "fillMode": "forwards",
+                  "animationDidStop": function(finished) {} };
   
   // Create clock view
-  containerView.frame = screenFrame; 
-  
-  if (showInfos == "True")
-  {
-      overlay = initOverlay();
-      Views.push(overlay);
-      overlay.addAnimation(animation, endTimeView);
-      
-      overlay2 = initOverlay2();
-      Views.push(overlay2);
-      overlay2.addAnimation(animation, endTimeView);
-      
-      infoView = initVideoInfoView();
-      Views.push(infoView);
-      infoView.addAnimation(animation, endTimeView);
-      
-      infoView2 = initVideoInfoView2();
-      Views.push(infoView2);
-      infoView2.addAnimation(animation, endTimeView);
-      
-      posterView = initPosterView();
-      Views.push(posterView);
-      posterView.addAnimation(animation, endTimeView);
-  }
-  
+  containerView.frame = screenFrame;
+    
+    if (showInfos == "True")
+    {        
+        overlay2 = initOverlay2();
+        Views.push(overlay2);
+        overlay2.addAnimation(animation, endTimeView);
+        
+        infoView = initVideoInfoView();
+        Views.push(infoView);
+        infoView.addAnimation(animation, endTimeView);
+        
+        infoView2 = initVideoInfoView2();
+        Views.push(infoView2);
+        infoView2.addAnimation(animation, endTimeView);
+        
+        posterView = initPosterView();
+        Views.push(posterView);
+        posterView.addAnimation(animation, endTimeView);
+    }
     
   if (showClock == "True")
   {
       clockView = initClockView();
       Views.push(clockView);
-      clockView.addAnimation(animation, clockView);
+      clockView.addAnimation(animation, clockView)
   }
- 
   if (duration > 0 ) // TODO: grab video length from player not library????
   {
     if (showEndtime == "True")
     {
         endTimeView = initEndTimeView();
         Views.push(endTimeView);
-        endTimeView.addAnimation(animation, endTimeView);
+        endTimeView.addAnimation(animation, endTimeView)
     }
   }
   log('willStartPlaying/createClockView done');
   
   // create subtitle view
   if (subtitleURL &&
-      ( !isTranscoding ||
-       isTranscoding && mediaURL.indexOf('skipSubtitles=1') > -1 )
+       ( !isTranscoding ||
+         isTranscoding && mediaURL.indexOf('skipSubtitles=1') > -1 )
      )
   {
       subtitleView = initSubtitleView();
@@ -254,9 +244,10 @@ atv.player.willStartPlaying = function()
   // Paint the views on Screen.
   containerView.subviews = Views;
   atv.player.overlay = containerView;
-    
+
   log('willStartPlaying done');
 };
+
 
 /*
  * Playlist handling
@@ -264,24 +255,25 @@ atv.player.willStartPlaying = function()
 
 var assettimer = null;
 
-atv.player.loadMoreAssets = function(callback)
+atv.player.loadMoreAssets = function(callback) 
 {
     assettimer = atv.setInterval(
         function()
         {
-             atv.clearInterval(assettimer);
-                                 
-             var root = atv.player.asset;
-             var videoAssets = root.getElementsByTagName('httpFileVideoAsset');
-             if (videoAssets != null && videoAssets.length > 1)
+            atv.clearInterval(assettimer);
+            
+            var root = atv.player.asset;
+            var videoAssets = root.getElementsByTagName('httpFileVideoAsset');
+            if (videoAssets != null && videoAssets.length > 1)
                 videoAssets.shift();
-             else
+            else
                 videoAssets = null;
-             callback.success(videoAssets);
-        
-             log('loadMoreAssets done');
-          } , 1000);
+            callback.success(videoAssets);
+            
+            log('loadMoreAssets done');
+        } , 1000);
 }
+
 
 atv.player.currentAssetChanged = function()
 {
@@ -307,23 +299,23 @@ function getMetadata()
     
     var metadata = atv.player.asset.getElementByTagName('myMetadata');
     if (metadata != null)
-        {
-            key = metadata.getTextContent('key');
-            ratingKey = metadata.getTextContent('ratingKey');
-            duration = parseInt(metadata.getTextContent('duration'));
-            partDuration = parseInt(metadata.getTextContent('partDuration'));
-            
-            // todo: subtitle handling with playlists/stacked media
-            subtitleURL = metadata.getTextContent('subtitleURL');
-            
-            videoName = metadata.getTextContent('videoTitle');
-            videoName2 = metadata.getTextContent('videoSubtitle');
-            poster = metadata.getTextContent('poster');
-            
-            log('updateMetadata/getMetadata done');
-            }
-    log('updateMetadata done');
+    {
+        key = metadata.getTextContent('key');
+        ratingKey = metadata.getTextContent('ratingKey');
+        duration = parseInt(metadata.getTextContent('duration'));
+        partDuration = parseInt(metadata.getTextContent('partDuration'));
+        
+        // todo: subtitle handling with playlists/stacked media
+        subtitleURL = metadata.getTextContent('subtitleURL');
+        
+        videoName = metadata.getTextContent('videoTitle');
+        videoName2 = metadata.getTextContent('videoSubtitle');
+        poster = metadata.getTextContent('poster');
+        
+        log('updateMetadata/getMetadata done');
     }
+    log('updateMetadata done');
+}
 
 
 // atv.Element extensions
@@ -339,7 +331,7 @@ if( atv.Element ) {
 		}
 		return undefined;
 	}
-    
+
     // getTextContent - return empty string if node not existing.
     atv.Element.prototype.getTextContent = function(tagName) {
         var element = this.getElementByTagName(tagName);
@@ -347,21 +339,23 @@ if( atv.Element ) {
             return element.textContent;
         else
             return '';
-        }
+    }
 }
 
+
+var statePause = 0;
 
 /*
  * Handle showing/hiding of transport controls
  */
 atv.player.onTransportControlsDisplayed = function(animationDuration)
 {
-    
+    showOverlays(0);
 };
 
 atv.player.onTransportControlsHidden = function(animationDuration)
 {
-  
+    if (statePause == 0)  hideOverlays(0);
 };
 
 
@@ -378,7 +372,6 @@ showOverlays = function(animationDuration)
     if (showClock == "True") clockView.addAnimation(animation, clockView);
     if (showEndtime == "True") endTimeView.addAnimation(animation, endTimeView);
     if (showInfos == "True") {
-        overlay.addAnimation(animation, overlay);
         overlay2.addAnimation(animation, overlay2);
         infoView.addAnimation(animation, infoView);
         infoView2.addAnimation(animation, infoView2);
@@ -395,7 +388,6 @@ hideOverlays = function(animationDuration)
     if (showClock == "True") clockView.addAnimation(animation, clockView);
     if (showEndtime == "True") endTimeView.addAnimation(animation, endTimeView);
     if (showInfos == "True") {
-        overlay.addAnimation(animation, overlay);
         overlay2.addAnimation(animation, overlay2);
         infoView.addAnimation(animation, infoView);
         infoView2.addAnimation(animation, infoView2);
@@ -408,7 +400,7 @@ hideOverlays = function(animationDuration)
  */
  
 var pingTimer = null;
-
+ 
 atv.player.playerStateChanged = function(newState, timeIntervalSec) {
   log("Player state: " + newState + " at this time: " + timeIntervalSec);
   state = null;
@@ -418,11 +410,14 @@ atv.player.playerStateChanged = function(newState, timeIntervalSec) {
   {
     state = 'paused';
     if (isTranscoding)
-        {
-            pingTimer = atv.setInterval(
-            function() { loadPage( baseURL + '/video/:/transcode/universal/ping?session=' + atv.device.udid); },60000);
-          }
-    showOverlays(0.5);
+    {
+      pingTimer = atv.setInterval(
+        function() { loadPage( baseURL + '/video/:/transcode/universal/ping?session=' + atv.device.udid); },
+        60000
+      );
+    }
+      showOverlays(0.5);
+      statePause = 1;
   }
 
   // Playing state, kill paused state ping timer
@@ -430,8 +425,7 @@ atv.player.playerStateChanged = function(newState, timeIntervalSec) {
   {
     state = 'play'
     atv.clearInterval(pingTimer);
-      hideOverlays(0.5);
-
+      statePause = 0;
   }
 
   // Loading state, tell PMS we're buffering
@@ -452,7 +446,7 @@ atv.player.playerStateChanged = function(newState, timeIntervalSec) {
       token = '&X-Plex-Token=' + accessToken;
   loadPage( baseURL + '/:/timeline?ratingKey=' + ratingKey + 
                       '&key=' + key +
-                      '&duration=' + duration.toString() +
+                      '&duration=' + duration.toString() + 
                       '&state=' + state + 
                       '&time=' + thisReportTime.toString() + 
                       '&report=1' +
@@ -471,219 +465,205 @@ atv.player.playerStateChanged = function(newState, timeIntervalSec) {
 
 var screenFrame = atv.device.screenFrame;
 var containerView = new atv.View();
-var overlay;
-var overlay2;
-var posterView;
 var clockView;
-var infoView;
 var clockTimer;
 var endTimeView;
 var endTimer;
 
-function pad(num, len) {return (Array(len).join("0") + num).slice(-len);};
+var overlay2;
+var posterView;
+var infoView;
 
-function initOverlay()
-{
-    var overlayHeight = screenFrame.height * 0.14;
-    var overscanadjust = 0.008 * (parseInt(overscanAdjust));
-    
-    overlay = new atv.View();
-    overlay.frame = {x: screenFrame.x, 
-                     y: screenFrame.y + (screenFrame.height * (1 + overscanadjust)) - overlayHeight,
-                     width: screenFrame.width, height: overlayHeight };
-    overlay.backgroundColor = { red: 0, green: 0, blue: 0, alpha: 0.7 };
-    
-    return overlay;
-}
+
+function pad(num, len) {return (Array(len).join("0") + num).slice(-len);};
 
 function initPosterView()
 {
     var posterView = new atv.ImageView();
-
+    
     var width = screenFrame.width * 0.1;
     var height = screenFrame.height * 0.2;
     var overscanadjust = 0.006 * (parseInt(overscanAdjust));
-
+    
     posterView.frame = {
-        x: screenFrame.x + 40,
-        y: screenFrame.y + (screenFrame.height * (0.96 + overscanadjust)) - height,
-        width: width,
-        height: height
+    x: screenFrame.x + 40,
+    y: screenFrame.y + (screenFrame.height * (0.36 + overscanadjust) - height),
+    width: width,
+    height: height
     };
-
+    
     posterView.loadImageAtURL(poster);
     return posterView;
 }
 
 function initOverlay2()
 {
-    var overlayHeight = screenFrame.height * 0.16;
+    var overlayHeight = screenFrame.height * 0.28;
     var overscanadjust = 0.006 * (parseInt(overscanAdjust));
-
+    
     overlay2 = new atv.View();
-    overlay2.frame = {x: screenFrame.x, 
-                      y: screenFrame.y + (screenFrame.height * (0.16 - overscanadjust)) - overlayHeight, 
-                      width: screenFrame.width, height: overlayHeight };
-    overlay2.backgroundColor = { red: 0, green: 0, blue: 0, alpha: 0.7 };
+    overlay2.frame = {x: screenFrame.x,
+    y: screenFrame.y + (screenFrame.height * (0.28 - overscanadjust)) - overlayHeight,
+        width: screenFrame.width, height: overlayHeight };
+    overlay2.backgroundColor = { red: 0, green: 0, blue: 0, alpha: 0.65 };
     
     return overlay2;
 }
 
 function initVideoInfoView()
 {
-  infoView = new atv.TextView();
-  var width = screenFrame.width;
-  var height = screenFrame.height * 0.2;
-  var overscanadjust = 0.4 * (parseInt(overscanAdjust));
-  var offsetx = screenFrame.width * 0.125;
-  if (clockPosition == 'Left') offsetx = -50;
+    infoView = new atv.TextView();
+    var width = screenFrame.width;
+    var height = screenFrame.height * 0.2;
+    var overscanadjust = 0.4 * (parseInt(overscanAdjust));
+    var offsetx = screenFrame.width * 0.125;
+    if (clockPosition == 'Left') offsetx = -50;
     
-  infoView.frame = { "x": screenFrame.x + (screenFrame.width * overscanadjust) + offsetx, 
-                      "y": screenFrame.y + (screenFrame.height * (0.96 + overscanadjust)) - height,
-                      "width": width, "height": height };
+    infoView.frame = { "x": screenFrame.x + (screenFrame.width * overscanadjust) + offsetx,
+        "y": screenFrame.y + (screenFrame.height * (0.27 + overscanadjust)) - height,
+        "width": width, "height": height };
     
-  if (clockPosition == 'Left') {
-      infoView.attributedString = {string: " " + videoName2, attributes: {pointSize: 36.0, color: {red: 1, blue: 1, green: 1}, alignment: "right", weight: "light"}};
-  } else {
-      infoView.attributedString = {string: " " + videoName2, attributes: {pointSize: 36.0, color: {red: 1, blue: 1, green: 1}, alignment: "left", weight: "light"}};
-  }
+    if (clockPosition == 'Left') {
+        infoView.attributedString = {string: " " + videoName2, attributes: {pointSize: 36.0, color: {red: 1, blue: 1, green: 1}, alignment: "right", weight: "light"}};
+    } else {
+        infoView.attributedString = {string: " " + videoName2, attributes: {pointSize: 36.0, color: {red: 1, blue: 1, green: 1}, alignment: "left", weight: "light"}};
+    }
     
-  return infoView;
+    return infoView;
 }
 
 function initVideoInfoView2()
 {
-  infoView2 = new atv.TextView();
-  var width = screenFrame.width;
-  var height = screenFrame.height * 0.2;
-  var overscanadjust = 0.4 * (parseInt(overscanAdjust));
-  var offsetx = screenFrame.width * 0.13;
-  if (clockPosition == 'Left') offsetx = -50;
+    infoView2 = new atv.TextView();
+    var width = screenFrame.width;
+    var height = screenFrame.height * 0.2;
+    var overscanadjust = 0.4 * (parseInt(overscanAdjust));
+    var offsetx = screenFrame.width * 0.13;
+    if (clockPosition == 'Left') offsetx = -50;
     
-  infoView2.frame = { "x": screenFrame.x + (screenFrame.width * overscanadjust) + offsetx - 2, 
-                      "y": screenFrame.y + (screenFrame.height * (0.90 + overscanadjust)) - height,
-                      "width": width, "height": height };
+    infoView2.frame = { "x": screenFrame.x + (screenFrame.width * overscanadjust) + offsetx - 2,
+        "y": screenFrame.y + (screenFrame.height * (0.21 + overscanadjust)) - height,
+        "width": width, "height": height };
     
-  if (clockPosition == 'Left') {
-      infoView2.attributedString = {string: " " + videoName, attributes: {pointSize: 20.0, color: {red: 1, blue: 1, green: 1}, alignment: "right", weight: "light"}};
-  } else {
-      infoView2.attributedString = {string: " " + videoName, attributes: {pointSize: 20.0, color: {red: 1, blue: 1, green: 1}, alignment: "left", weight: "light"}};
-  }
+    if (clockPosition == 'Left') {
+        infoView2.attributedString = {string: " " + videoName, attributes: {pointSize: 20.0, color: {red: 1, blue: 1, green: 1}, alignment: "right", weight: "light"}};
+    } else {
+        infoView2.attributedString = {string: " " + videoName, attributes: {pointSize: 20.0, color: {red: 1, blue: 1, green: 1}, alignment: "left", weight: "light"}};
+    }
     
-  return infoView2;
+    return infoView2;
 }
 
 function initClockView()
 {
-  clockView = new atv.TextView();
-  var width = screenFrame.width * 0.15;
-  if (timeFormat == '24 Hour')
-  {
-  width = screenFrame.width * 0.10;
-  }
-  var height = screenFrame.height * 0.08;
-  var overscanadjust = 0.008 * (parseInt(overscanAdjust));
-  var xmul = 0.1; //Default for Left Position
-  if (clockPosition == 'Center') var xmul = 0.5;
-  else if (clockPosition == 'Right') var xmul = 0.9;
-
-  
-  // Setup the clock frame
-  if (showInfos == "False") clockView.backgroundColor = { red: 0, blue: 0, green: 0, alpha: 0.7};
-  clockView.frame = { "x": screenFrame.x + (screenFrame.width * xmul) - (width * 0.5), 
-                      "y": screenFrame.y + (screenFrame.height * (0.96 + overscanadjust)) - height,
-                      "width": width, "height": height };
-
-  // Update the overlay clock
-  clockTimer = atv.setInterval( updateClock, 1000 );
-  updateClock();
-  
-  return clockView;
+    clockView = new atv.TextView();
+    var width = screenFrame.width * 0.15;
+    if (timeFormat == '24 Hour')
+    {
+        width = screenFrame.width * 0.10;
+    }
+    var height = screenFrame.height * 0.08;
+    var overscanadjust = 0.008 * (parseInt(overscanAdjust));
+    var xmul = 0.1; //Default for Left Position
+    if (clockPosition == 'Center') var xmul = 0.5;
+    else if (clockPosition == 'Right') var xmul = 0.9;
+    
+    
+    // Setup the clock frame
+    if (showInfos == "False") clockView.backgroundColor = { red: 0, blue: 0, green: 0, alpha: 0.7};
+    clockView.frame = { "x": screenFrame.x + (screenFrame.width * xmul) - (width * 0.5),
+        "y": screenFrame.y + (screenFrame.height * (0.27 + overscanadjust)) - height,
+        "width": width, "height": height };
+    
+    // Update the overlay clock
+    clockTimer = atv.setInterval( updateClock, 1000 );
+    updateClock();
+    
+    return clockView;
 }
 
 function initEndTimeView()
 {
-  endTimeView = new atv.TextView();
-  var width = screenFrame.width * 0.20;
-  if (timeFormat == '12 Hour')
-  {
-  width = screenFrame.width * 0.25;
-  }
-  var height = screenFrame.height * 0.3;
-  var overscanadjust = 0.008 * (parseInt(overscanAdjust));
-  var xmul = 0.5; // Default for Left Position
-  //if (clockPosition == 'Center') var xmul = 0.5;
-  //else if (clockPosition == 'Right') var xmul = 0.9;
+    endTimeView = new atv.TextView();
+    var width = screenFrame.width * 0.20;
+    if (timeFormat == '12 Hour')
+    {
+        width = screenFrame.width * 0.25;
+    }
+    var height = screenFrame.height * 0.3;
+    var overscanadjust = 0.008 * (parseInt(overscanAdjust));
+    var xmul = 0.5; // Default for Left Position
+    if (clockPosition == 'Center') var xmul = 0.5;
+    else if (clockPosition == 'Right') var xmul = 0.88;
     
-  // Setup the end time frame
-  if (showInfos == "False") endTimeView.backgroundColor = { red: 0, blue: 0, green: 0, alpha: 0.7};
-  endTimeView.frame = { "x": screenFrame.x + (screenFrame.width * xmul) - (width * 0.5), 
-                        "y": screenFrame.y + (screenFrame.height * (0.075 - overscanadjust)) - height,
-                        "width": width, "height": height };
-
-  // Update the overlay clock
-  endTimer = atv.setInterval( updateEndTime, 1000 );
-  updateEndTime();
-  
-  return endTimeView;
+    // Setup the end time frame
+    if (showInfos == "False") endTimeView.backgroundColor = { red: 0, blue: 0, green: 0, alpha: 0.7};
+    endTimeView.frame = { "x": screenFrame.x + (screenFrame.width * xmul) - (width * 0.5),
+        "y": screenFrame.y + (screenFrame.height * (0.21 - overscanadjust)) - height,
+        "width": width, "height": height };
+    
+    // Update the overlay clock
+    endTimer = atv.setInterval( updateEndTime, 1000 );
+    updateEndTime();
+    
+    return endTimeView;
 }
 
 function updateClock()
 {
-  var tail = "AM";
-  var time = new Date();
-  var hours24 = pad(time.getHours(), 2);
-  var h12 = parseInt(hours24);
-  if (h12 > 12) {h12 = h12 - 12; tail = "PM";}
-  else if (h12 == 12) {tail = "PM";}
-  else if (h12 == 0) {h12 = 12; tail = "AM";}
-  hours12 = h12.toString();
-  var mins = pad(time.getMinutes(), 2);
-  var secs = pad(time.getSeconds(), 2);
-  var timestr24 = hours24 + ":" + mins;
-  var timestr12 = hours12 + ":" + mins + " " + tail;
-  if (timeFormat == '24 Hour')
-  {
-    clockView.attributedString = {string: "" + timestr24,
-      attributes: {pointSize: 36.0, color: {red: 1, blue: 1, green: 1}, alignment: "center", weight: "light"}};
-  }
-  else
-  {
-    clockView.attributedString = {string: "" + timestr12,
-      attributes: {pointSize: 36.0, color: {red: 1, blue: 1, green: 1}, alignment: "center", weight: "light"}};
-  }
+    var tail = "AM";
+    var time = new Date();
+    var hours24 = pad(time.getHours(), 2);
+    var h12 = parseInt(hours24);
+    if (h12 > 12) {h12 = h12 - 12; tail = "PM";}
+    else if (h12 == 12) {tail = "PM";}
+    else if (h12 == 0) {h12 = 12; tail = "AM";}
+    hours12 = h12.toString();
+    var mins = pad(time.getMinutes(), 2);
+    var secs = pad(time.getSeconds(), 2);
+    var timestr24 = hours24 + ":" + mins;
+    var timestr12 = hours12 + ":" + mins + " " + tail;
+    if (timeFormat == '24 Hour')
+    {
+        clockView.attributedString = {string: "" + timestr24,
+            attributes: {pointSize: 36.0, color: {red: 1, blue: 1, green: 1}, alignment: "center", weight: "light"}};
+    }
+    else
+    {
+        clockView.attributedString = {string: "" + timestr12,
+            attributes: {pointSize: 36.0, color: {red: 1, blue: 1, green: 1}, alignment: "center", weight: "light"}};
+    }
 };
 
 function updateEndTime()
 {
-  var tail = "AM";
-  var time = new Date();
-  var intHours = parseInt(time.getHours());
-  var intMins = parseInt(time.getMinutes());
-  var intSecs = parseInt(time.getSeconds());
-  var totalTimeInSecs = ((intHours * 3600) + (intMins * 60) + intSecs) + remainingTime;
-  var endHours = Math.floor(totalTimeInSecs / 3600);
-  if (endHours >= 24) { endHours = endHours - 24; }
-  var endMins = Math.floor((totalTimeInSecs % 3600) / 60);
-  var hours24 = pad(endHours.toString(), 2);
-  var h12 = endHours;
-  if (h12 > 12) { h12 = h12 - 12; tail = "PM"; }
-  else if (h12 == 12) { tail = "PM"; }
-  else if (h12 == 0) { h12 = 12; tail = "AM"; }
-  hours12 = h12.toString();
-  var mins = pad(endMins.toString(), 2);
-  var timestr24 = hours24 + ":" + mins;
-  var timestr12 = hours12 + ":" + mins + " " + tail;
-  var endTimeStr = "Ends at:  "
-  if (timeFormat == '24 Hour') { endTimeStr = endTimeStr + timestr24; }
-  else { endTimeStr = endTimeStr + timestr12; }
-  //if (remainingTime == 0) { endTimeStr = ''; endTimeView.backgroundColor = { red: 0, blue: 0, green: 0, alpha: 0};}
-  //else { endTimeView.backgroundColor = { red: 0, blue: 0, green: 0, alpha: 0.7};}
-  
-  endTimeView.attributedString = {string: endTimeStr,
-      attributes: {pointSize: 20.0, color: {red: 1, blue: 1, green: 1}, alignment: "center"}};
+    var tail = "AM";
+    var time = new Date();
+    var intHours = parseInt(time.getHours());
+    var intMins = parseInt(time.getMinutes());
+    var intSecs = parseInt(time.getSeconds());
+    var totalTimeInSecs = ((intHours * 3600) + (intMins * 60) + intSecs) + remainingTime;
+    var endHours = Math.floor(totalTimeInSecs / 3600);
+    if (endHours >= 24) { endHours = endHours - 24; }
+    var endMins = Math.floor((totalTimeInSecs % 3600) / 60);
+    var hours24 = pad(endHours.toString(), 2);
+    var h12 = endHours;
+    if (h12 > 12) { h12 = h12 - 12; tail = "PM"; }
+    else if (h12 == 12) { tail = "PM"; }
+    else if (h12 == 0) { h12 = 12; tail = "AM"; }
+    hours12 = h12.toString();
+    var mins = pad(endMins.toString(), 2);
+    var timestr24 = hours24 + ":" + mins;
+    var timestr12 = hours12 + ":" + mins + " " + tail;
+    var endTimeStr = "Ends at:  "
+    if (timeFormat == '24 Hour') { endTimeStr = endTimeStr + timestr24; }
+    else { endTimeStr = endTimeStr + timestr12; }
+    //if (remainingTime == 0) { endTimeStr = ''; endTimeView.backgroundColor = { red: 0, blue: 0, green: 0, alpha: 0};}
+    //else { endTimeView.backgroundColor = { red: 0, blue: 0, green: 0, alpha: 0.7};}
+    
+    endTimeView.attributedString = {string: endTimeStr,
+        attributes: {pointSize: 20.0, color: {red: 1, blue: 1, green: 1}, alignment: "center"}};
 };
-
 
 /*
  *

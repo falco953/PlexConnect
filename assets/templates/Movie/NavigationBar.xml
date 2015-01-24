@@ -5,13 +5,8 @@
   </head>
 
 	<body>
-<<<<<<< HEAD:assets/templates/MovieSectionTopLevel.xml
-		<viewWithNavigationBar id="PlexConnect_Navigation" onNavigate="loadItem(event)" volatile="true" onVolatileReload="updatePage('{{URL()}}&amp;PlexConnect=Plex_Movie_Scanner');">
-			<navigation currentIndex="0">
-=======
 		<viewWithNavigationBar id="PlexConnect_Navigation" onNavigate="loadItem(event)" volatile="true" onVolatileReload="updatePage('{{URL(:::PlexConnect=Plex_Movie_Scanner)}}');">
 			<navigation currentIndex="{{VAL($movies_navbar_ondeck:0:unchecked=0|checked=1)}}">
->>>>>>> iBaa/master:assets/templates/Movie/NavigationBar.xml
 
       <navigationItem id="0">
 					<title>{{TEXT(All Movies)}}</title>

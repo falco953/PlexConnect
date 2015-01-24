@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 
 """
-    Trying to channel debug output
-    
-    debug levels (examples):
-    0 - non-repeating output (starting up, shutting down), error messages
-    1 - function return values
-    2 - lower debug data, function input values, intermediate info...
-    """
+Trying to channel debug output
+
+debug levels (examples):
+0 - non-repeating output (starting up, shutting down), error messages
+1 - function return values
+2 - lower debug data, function input values, intermediate info...
+"""
 
 dlevels = { "PlexConnect": 0, \
-    "PlexAPI"    : 0, \
-        "DNSServer"  : 1, \
+            "PlexAPI"    : 0, \
+            "DNSServer"  : 1, \
             "WebServer"  : 1, \
             "XMLConverter" : 0, \
             "Settings"   : 0, \
@@ -19,7 +19,7 @@ dlevels = { "PlexConnect": 0, \
             "Localize"   : 0, \
             "ATVLogger"  : 0, \
             "PILBackgrounds" : 0, \
-            }
+          }
 
 
 
@@ -35,11 +35,11 @@ except ImportError:
 g_logfile = ''
 g_loglevel = 0
 
-def dinit(src, param, newlog=False):
+def dinit(src, param, newlog=False):    
     if 'LogFile' in param:
         global g_logfile
         g_logfile = param['LogFile']
-    
+        
     if 'LogLevel' in param:
         global g_loglevel
         g_loglevel = { "Normal": 0, "High": 2, "Off": -1 }.get(param['LogLevel'], 0)
@@ -47,7 +47,7 @@ def dinit(src, param, newlog=False):
     if not g_loglevel==-1 and not g_logfile=='' and newlog:
         f = open(g_logfile, 'w')
         f.close()
-    
+        
     dprint(src, 0, "started: {0}", time.strftime("%H:%M:%S"))
 
 
@@ -93,9 +93,9 @@ def dprint(src, dlevel, *args):
 
 
 """
-    # XML in-place prettyprint formatter
-    # Source: http://stackoverflow.com/questions/749796/pretty-printing-xml-in-python
-    """
+# XML in-place prettyprint formatter
+# Source: http://stackoverflow.com/questions/749796/pretty-printing-xml-in-python
+"""
 def indent(elem, level=0):
     i = "\n" + level*"  "
     if len(elem):

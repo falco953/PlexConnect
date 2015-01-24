@@ -6,22 +6,16 @@
   </head>
 
   <body>
-<<<<<<< HEAD:assets/templates/Settings_TopLevel.xml
-    <itemCollectionWithImageHeader id="SettingsPage_VideoOSD">
-=======
     <listWithPreview id="SettingsPage_MainNavigation">
->>>>>>> iBaa/master:assets/templates/Settings/TopLevel.xml
       <header>
-        <imageHeader>
-          <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=640|1080=960)}}, 0" required="true">
-           {{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{TEXT(Settings)}}"))}}","","backgrounds/settings.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","","9A9A9A","","right","top","300","90","","","List")}})}}
-          </image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{TEXT(Settings)}}</title>
+        </simpleHeader>
       </header>
       <preview>
         <keyedPreview>
           <title>&#x00AD;<!--soft-hyphen--></title>
-          <summary>PlexConnect is a simple way to bring the Plex Client to the Apple TV.</summary>
+          <summary/>
           <metadataKeys>
             <label>{{TEXT(Version)}}</label>
             <label>{{TEXT(Authors)}}</label>
@@ -36,7 +30,7 @@
             <label>https://github.com/ibaa/plexconnect</label>
             <label>http://forums.plexapp.com/...plexconnect</label>
           </metadataValues>
-          <image>{{URL(:/thumbnails/PlexConnectLogo.png)}}</image>
+          <image>{{URL(:/thumbnails/PlexConnectLogo.jpg)}}</image>
         </keyedPreview>
       </preview>
 
@@ -53,31 +47,8 @@
                 <label>{{TEXT(Playlists)}}</label>
                 <rightLabel>{{SETTING(playlistsview)}}</rightLabel>
               </oneLineMenuItem>
-<<<<<<< HEAD:assets/templates/Settings_TopLevel.xml
-              <oneLineMenuItem id="ShowSharedLibrarys" onSelect="toggleSettings('ShowSharedLibrarys', 'Settings_TopLevel')">
-                <label>{{TEXT(Show Shared Librarys)}}</label>
-                <rightLabel>{{SETTING(showsharedlibrarys)}}</rightLabel>
-              </oneLineMenuItem>
-            </items>
-          </menuSection>
-          
-          <menuSection>
-            <header>
-              <horizontalDivider alignment="left">
-                <title>{{TEXT(Library)}}</title>
-              </horizontalDivider>
-            </header>
-            <items>
-              <oneLineMenuItem id="StartTab" onSelect="toggleSettings('StartTab', 'Settings_TopLevel')">
-                <label>{{TEXT(Default Tab)}}</label>
-                <rightLabel>{{SETTING(starttab)}}</rightLabel>
-              </oneLineMenuItem>              
-             <oneLineMenuItem id="LibraryView" onSelect="toggleSettings('LibraryView', 'Settings_TopLevel')">
-                <label>{{TEXT(Library View)}}</label>
-=======
               <oneLineMenuItem id="LibraryView" onSelect="toggleSettings('LibraryView', 'Settings_TopLevel')">
                 <label>{{TEXT(Library)}}</label>
->>>>>>> iBaa/master:assets/templates/Settings/TopLevel.xml
                 <rightLabel>{{SETTING(libraryview)}}</rightLabel>
               </oneLineMenuItem>
               <oneLineMenuItem id="SharedLibrariesView" onSelect="toggleSettings('SharedLibrariesView', 'Settings_TopLevel')">
@@ -94,8 +65,62 @@
               </oneLineMenuItem>
             </items>
           </menuSection>
+          
+          <menuSection>
+              <header>
+                  <horizontalDivider alignment="left">
+                      <title>{{TEXT(Library)}}</title>
+                  </horizontalDivider>
+              </header>
+              <items>
+                  <oneLineMenuItem id="ImageHeader" onSelect="toggleSettings('ImageHeader', 'Settings_TopLevel')">
+                      <label>{{TEXT(Header)}}</label>
+                      <rightLabel>{{SETTING(imageheader)}}</rightLabel>
+                  </oneLineMenuItem>{{CUT(^aTVFirmwareVersion:CUT:=CUT|6.0=)}}
+                  <oneLineMenuItem id="SectionIcons" onSelect="toggleSettings('SectionIcons', 'Settings_TopLevel')">
+                      <label>{{TEXT(Section Icons)}}</label>
+                      <rightLabel>{{SETTING(sectionicons)}}</rightLabel>
+                  </oneLineMenuItem>
+                  <oneLineMenuItem id="SectionsPosition" onSelect="toggleSettings('SectionsPosition', 'Settings_TopLevel')">
+                      <label>{{TEXT(Sections Position)}}</label>
+                      <rightLabel>{{SETTING(sectionsposition)}}</rightLabel>
+                  </oneLineMenuItem>
+                  <oneLineMenuItem id="ShowTitles_Library" onSelect="toggleSettings('ShowTitles_Library', 'Settings_TopLevel')">
+                      <label>{{TEXT(Poster Titles)}}</label>
+                      <rightLabel>{{SETTING(showtitles_library)}}</rightLabel>
+                  </oneLineMenuItem>
+              </items>
+        </menuSection>
+        <menuSection>
+            <header>
+                <horizontalDivider alignment="left">
+                    <title>{{TEXT(Library Content)}}</title>
+                </horizontalDivider>
+            </header>
+            <items>
+                  <oneLineMenuItem id="Library_OnDeck" onSelect="toggleSettings('Library_OnDeck', 'Settings_TopLevel')">
+                      <label>{{TEXT(On Deck)}}</label>
+                      <accessories>
+                          <checkMark/>
+                      </accessories>{{CUT($library_ondeck::unchecked=CUT|checked=)}}
+                  </oneLineMenuItem>
+                  
+                  <oneLineMenuItem id="Library_RecentlyAdded" onSelect="toggleSettings('Library_RecentlyAdded', 'Settings_TopLevel')">
+                      <label>{{TEXT(Recently Added)}}</label>
+                      <accessories>
+                          <checkMark/>
+                      </accessories>{{CUT($library_recentlyadded::unchecked=CUT|checked=)}}
+                  </oneLineMenuItem>
+                  <oneLineMenuItem id="Library_Channels" onSelect="toggleSettings('Library_Channels', 'Settings_TopLevel')">
+                      <label>{{TEXT(Channels)}}</label>
+                      <accessories>
+                          <checkMark/>
+                      </accessories>{{CUT($library_channels::unchecked=CUT|checked=)}}
+                  </oneLineMenuItem>
+              </items>
+          </menuSection>
         </sections>
       </menu>
-    </itemCollectionWithImageHeader>
+    </listWithPreview>
   </body>
 </atv>

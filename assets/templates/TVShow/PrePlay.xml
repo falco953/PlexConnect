@@ -2,34 +2,18 @@
   <head>
     <script src="{{URL(:/js/utils.js)}}" />
     <script src="{{URL(:/js/selectAudioAndSubs.js)}}" />
-    <script src="{{URL(:/js/settings.js)}}" />
   </head>
 
   <body>
-<<<<<<< HEAD:assets/templates/EpisodePrePlay.xml
-    <itemDetailWithImageHeader id="com.apple.trailer" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL()}}&amp;PlexConnect=EpisodePrePlay')">
-	  <styles>
-          <color name="titleColor">#ce7f1a</color>
-          <color name="metadataColor">#ffffff</color>
-        </styles>
-
-	   <header>
-	     <imageHeader>
-	       <!--<image insets="{{VAL(^aTVScreenResolution:1:720=880|1080=720)}}, 0, 0, 0" required="true">http://{{VAL(%ip)}}/atv/gradient.php?image={{IMAGEURL(Video/art:::)}}&amp;hd={{VAL(^aTVScreenResolution)}}&amp;title={{VAL(Video/index)}}.+{{EVAL(quote_plus("{{VAL(Video/title)}}".replace(' ', ' ')))}}</image>-->
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=520|1080=780)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","","{{EVAL(quote_plus("{{VAL(Video/index)}}. {{VAL(Video/title)}}"))}}","{{IMAGEURL(Video/art:::)}}","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","40","32","FFFFFF","FFFFFF","left","top","350","230","","","EpisodePrePlay")}})}}</image>
-	     </imageHeader>
-	   </header>
-        
-=======
     <itemDetail id="com.apple.trailer" volatile="true" onVolatileReload="atv.loadAndSwapURL('{{URL(:::PlexConnect=TVShow_PrePlay)}}')">
       <title>{{VAL(Video/index)}}. {{VAL(Video/title)}}</title>
       <subtitle>{{VAL(Video/studio)}}</subtitle>
->>>>>>> iBaa/master:assets/templates/TVShow/PrePlay.xml
       <rating>{{contentRating(Video/contentRating)}}</rating>
       <summary>{{VAL(Video/summary)}}</summary>{{CUT($showsynopsis::Hide=CUT|Show=)}}
       <summary>{{VAL(Video/summary)}}</summary>{{CUT(Video/viewCount:CUT:=)}}{{CUT($showsynopsis::Show=CUT|Hide=)}}
       <summary>{{TEXT(Synopsis hidden.)}}</summary>{{CUT(Video/viewCount)}}{{CUT($showsynopsis::Show=CUT|Hide=)}}
-      <image style="moviePoster">{{IMAGEURL(Video/parentThumb::768)}}</image>
+      <image style="sixteenByNinePoster">{{IMAGEURL(Video/thumb::768)}}</image>
+      <defaultImage>resource://16x9.png</defaultImage>
 
       <table>
         <columnDefinitions>
@@ -50,12 +34,12 @@
             <label>{{VAL(Video/Writer/tag)}}</label>
           </row>
           <row>
-            <label>{{VAL(Video/Media/videoResolution:Unknown:1080=1080p|720=720p|576=SD|480=SD|sd=SD)}} | {{VAL(Video/Media/audioCodec:Unknown:ac3=AC3|aac=AAC|mp3=MP3|dca=DTS|drms=DRMS)}} {{VAL(Video/Media/audioChannels:Unknown:2=Stereo|6=5.1|8=7.1)}} </label>
+            <label>{{VAL(Video/Media/videoResolution:Unknown:1080=1080p|720=720p|576=SD|480=SD|sd=SD)}} / {{VAL(Video/Media/audioCodec:Unknown:ac3=AC3|aac=AAC|mp3=MP3|dca=DTS|drms=DRMS)}} {{VAL(Video/Media/audioChannels:Unknown:2=Stereo|6=5.1|8=7.1)}} </label>
             <label>{{VAL(Video/Director[2]/tag)}}</label>
             <label>{{VAL(Video/Writer[2]/tag)}}</label>
           </row>
           <row>
-            <label>{{EVAL("{{VAL(Video/Media/container)}} | {{VAL(Video/Media/videoCodec)}}".upper())}}</label>
+            <label>{{EVAL("{{VAL(Video/Media/container)}} / {{VAL(Video/Media/videoCodec)}}".upper())}}</label>
             <label>{{VAL(Video/Director[3]/tag)}}</label>
             <label>{{VAL(Video/Writer[3]/tag)}}</label>
           </row>
@@ -69,7 +53,6 @@
             <label>{{VAL(Video/Director[4]/tag)}}</label>
             <label>{{VAL(Video/Writer[4]/tag)}}</label>
           </row>
-
         </rows>
       </table>
 
@@ -103,45 +86,22 @@
               </stash>
               
               <items>
-<<<<<<< HEAD:assets/templates/EpisodePrePlay.xml
-                  <actionButton id="play" onSelect="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play::{{VAL(Video/ratingKey)}}')"
-                      onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play::{{VAL(Video/ratingKey)}}')">
-                      <title>{{TEXT(Play)}}</title>
-                      <image>resource://Play.png</image>
-                      <focusedImage>resource://PlayFocused.png</focusedImage>
-                  </actionButton>
-                <actionButton id="scrobbleMenu"
-                				onHoldSelect="scrobbleMenu('{{URL(key)}}&amp;PlexConnect=ScrobbleMenuVideo')">
-                  <title>{{TEXT(Watch Status)}}</title>
-                  <image>resource://More.png</image>
-                  <focusedImage>resource://MoreFocused.png</focusedImage>
-                  <!--<badge></badge>-->
-                </actionButton> 
-=======
                 <actionButton id="play" onSelect="atv.loadURL('{{URL(key:::PlexConnect=Play_Video&amp;PlexConnectRatingKey={{VAL(Video/ratingKey)}})}}')"
                                         onPlay="atv.loadURL('{{URL(key:::PlexConnect=Play_Video&amp;PlexConnectRatingKey={{VAL(Video/ratingKey)}})}}')">
                   <title>{{TEXT(Play)}}</title>
                   <image>resource://Play.png</image>
                   <focusedImage>resource://PlayFocused.png</focusedImage>
                 </actionButton>
->>>>>>> iBaa/master:assets/templates/TVShow/PrePlay.xml
                 <actionButton id="selectAudioAndSubs"
-                    onHoldSelect="selectAudioAndSubs('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(Video/Media/Part/id)}}')"
-                    onSelect="selectAudioAndSubs('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(Video/Media/Part/id)}}')"
-                    onPlay="selectAudioAndSubs('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(Video/Media/Part/id)}}')">
-                    {{VAR(SelectAudioAndSubs:NoKey:{{EVAL( {{VAL(#AudioStreams)}}>1 or {{VAL(#SubtitleStreams)}}>0 )}})}}
-                    {{CUT(#SelectAudioAndSubs:CUT:False=CUT|True=)}}
-                    <title>{{TEXT(Audio/Subs)}}</title>
-                    <image>resource://Queue.png</image>
-                    <focusedImage>resource://QueueFocused.png</focusedImage>
+                              onHoldSelect="selectAudioAndSubs('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(Video/Media/Part/id)}}')"
+                              onSelect="selectAudioAndSubs('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(Video/Media/Part/id)}}')"
+                              onPlay="selectAudioAndSubs('{{VAL(%baseURL)}}', '{{VAL(%accesstoken)}}', '{{VAL(Video/Media/Part/id)}}')">
+                {{VAR(SelectAudioAndSubs:NoKey:{{EVAL( {{VAL(#AudioStreams)}}>1 or {{VAL(#SubtitleStreams)}}>0 )}})}}
+                {{CUT(#SelectAudioAndSubs:CUT:False=CUT|True=)}}
+                  <title>{{TEXT(Audio/Subs)}}</title>
+                  <image>resource://Queue.png</image>
+                  <focusedImage>resource://QueueFocused.png</focusedImage>
                 </actionButton>
-                <actionButton id="Settings" onSelect="atv.loadURL('{{URL(:/)}}&amp;PlexConnect=Settings')">
-                  <title>{{TEXT(Settings)}}</title>
-                  <image>resource://WishList.png</image>
-                  <focusedImage>resource://WishListFocused.png</focusedImage>
-                  <!--<badge></badge>-->
-                </actionButton>
-
               </items>
             </shelfSection>
           </sections>
@@ -161,16 +121,6 @@
           <sections>
             <shelfSection>
               <items>
-<<<<<<< HEAD:assets/templates/EpisodePrePlay.xml
-                  <sixteenByNinePoster related="true" alwaysShowTitles="true" id="{{URL(ratingKey)}}"
-                                                          onSelect="atv.loadAndSwapURL('{{URL(key)}}&amp;PlexConnect=EpisodePrePlay')"
-                                                           onPlay="atv.loadURL('{{URL(key)}}&amp;PlexConnect=Play::{{VAL(ratingKey)}}')">
-                      {{COPY(@parentEpisodes/Video)}}
-                      <title>{{VAL(index)}}. {{VAL(title)}}</title>
-                      <image>{{IMAGEURL(thumb::384)}}</image>
-                      <defaultImage>resource://16X9.png</defaultImage>
-                  </sixteenByNinePoster>
-=======
                 <sixteenByNinePoster related="true" alwaysShowTitles="true" id="{{URL(ratingKey)}}" 
                                      onSelect="atv.loadAndSwapURL('{{URL(key:::PlexConnect=TVShow_PrePlay)}}')"
                                      onPlay="atv.loadURL('{{URL(key:::PlexConnect=Play_Video&amp;PlexConnectRatingKey={{VAL(ratingKey)}})}}')">
@@ -179,13 +129,12 @@
                   <image>{{IMAGEURL(thumb::384)}}</image>
                   <defaultImage>resource://16X9.png</defaultImage>
                 </sixteenByNinePoster>
->>>>>>> iBaa/master:assets/templates/TVShow/PrePlay.xml
               </items>
             </shelfSection>
           </sections>
         </shelf>
       </bottomShelf>
 
-		</itemDetailWithImageHeader>
+		</itemDetail>
 	</body>
 </atv>

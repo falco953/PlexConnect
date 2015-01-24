@@ -4,12 +4,13 @@
   </head>
 
   <body>
-    <itemCollectionWithImageHeader id="Movie_DetailedList">
+    <listWithPreview id="Movie_DetailedList">
     {{CUT(size:CUT:0=CUT|1=)}}
       <header>
-        <imageHeader>
-            <image insets="0, 0, {{VAL(^aTVScreenResolution:1:720=620|1080=880)}}, 0" required="true">{{URL(:/fanartcache/{{LFBG("falco953","{{EVAL(quote_plus("{{VAL(title1)}}"))}}","{{EVAL(quote_plus("{{VAL(title2)}}"))}}","backgrounds/movie.jpg","{{VAL(^aTVScreenResolution)}}","fonts/OpenSans/OpenSans-Light.ttf","50","20","FFFFFF","FFFFFF","right","top","100","100","","10","Grid")}})}}</image>
-        </imageHeader>
+        <simpleHeader>
+          <title>{{VAL(title1)}}</title>
+          <subtitle>{{VAL(title2)}}</subtitle>
+        </simpleHeader>
       </header>
 
       <menu>
@@ -50,7 +51,7 @@
           </menuSection>
         </sections>
       </menu>
-    </itemCollectionWithImageHeader>
+    </listWithPreview>
     
     <!--No Items Available-->
     <dialog id="com.sample.error-dialog">

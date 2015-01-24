@@ -1,0 +1,3 @@
+<atv>
+    <redirect template="Movie/OverviewNavigation{{VAL($moviefanart::Hide=|Show=_Fanart)}}.xml" />
+</atv>

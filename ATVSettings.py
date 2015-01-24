@@ -10,32 +10,18 @@ from Debug import *  # dprint()
 
 
 options = { \
-<<<<<<< HEAD
-    'showplaylists'     :('True', 'False'), \
-    'showsharedlibrarys':('True', 'False'), \
-    'libraryview'            :('Grid', 'List'), \
-    'imageheader'            :('Show', 'Hide'), \
-    'sectionicons'            :('Apple', 'Plex', 'Fanart', 'Custom'), \
-    'sectionsposition'            :('Top', 'Bottom', 'Flow', 'Middle'), \
-    'library_search'            :('Show', 'Hide'), \
-    'library_ondeck'            :('checked', 'unchecked'), \
-    'library_recentlyadded'            :('checked', 'unchecked'), \
-    'library_channels'            :('unchecked', 'checked'), \
-    'movieview'         :('Grid', 'List', 'Detailed List'), \
-    'starttab'         :('Library', 'Shared Libraries', 'Channels'), \
-    'homevideoview'     :('Grid', 'List', 'Detailed List'), \
-    'actorview'         :('Movies', 'Portrait'), \
-    'showview'          :('List', 'Grid', 'Flow', 'Detailed List', 'Bookcase'), \
-    'flattenseason'     :('False', 'True'), \
-    'seasonview'        :('List', 'Coverflow'), \
-    'channelview'       :('List', 'Grid', 'Bookcase'), \
-    'durationformat'    :('Hours/Minutes', 'Minutes'), \
-    'showtitles_library'         :('Highlighted Only', 'Show All'), \
-=======
     'playlistsview'             :('List', 'Tabbed List', 'Hide'), \
-    'libraryview'               :('List', 'Grid', 'Bookcase', 'Hide'), \
+    'libraryview'               :('List', 'Grid', 'Bookcase', 'Overview', 'Hide'), \
     'sharedlibrariesview'       :('List', 'Grid', 'Bookcase', 'Hide'), \
     'channelview'               :('List', 'Tabbed List', 'Grid', 'Bookcase', 'Hide'), \
+    'imageheader'               :('Show', 'Hide'), \
+    'sectionicons'              :('Apple', 'Plex', 'Fanart', 'Custom'), \
+    'sectionsposition'          :('Top', 'Bottom', 'Flow', 'Middle'), \
+    'library_search'            :('Show', 'Hide'), \
+    'library_ondeck'            :('checked', 'unchecked'), \
+    'library_recentlyadded'     :('checked', 'unchecked'), \
+    'library_channels'          :('unchecked', 'checked'), \
+    'starttab'                  :('Library', 'Shared Libraries', 'Channels', 'Playlists'), \
     'movieview'                 :('Grid', 'List', 'Detailed List'), \
     'homevideoview'             :('Grid', 'List', 'Detailed List'), \
     'actorview'                 :('Movies', 'Portrait'), \
@@ -47,7 +33,7 @@ options = { \
     'tvshowfanart'              :('Hide', 'Show'), \
     'fanart_blur'               :('0', '5', '10', '15', '20'), \
     'moviepreplay_bottomshelf'  :('Extras', 'Related Movies'), \
->>>>>>> iBaa/master
+    'showtitles_library'        :('Highlighted Only', 'Show All'), \
     'showtitles_movies'         :('Highlighted Only', 'Show All'), \
     'showtitles_tvshows'        :('Highlighted Only', 'Show All'), \
     'showtitles_homevideos'     :('Highlighted Only', 'Show All'), \
@@ -93,7 +79,7 @@ options = { \
     'overscanadjust'    :('0', '1', '2', '3', '-3', '-2', '-1'), \
     'clockposition'     :('Center', 'Right', 'Left'), \
     'showendtime'       :('True', 'False'), \
-    'showplayinfos'       :('True', 'False'), \
+    'showplayinfos'     :('True', 'False'), \
     'timeformat'        :('24 Hour', '12 Hour'), \
     'myplex_user'       :('', ), \
     'myplex_auth'       :('', ), \
