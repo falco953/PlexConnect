@@ -51,17 +51,17 @@
             <label>{{VAL(Video/Writer[2]/tag)}}</label>
         </row>
         <row>
-            <label>{{EVAL("{{VAL(Video/Media/container)}} | {{VAL(Video/Media/videoCodec)}}".upper())}}</label>
-            <label>{{VAL(Video/Director[3]/tag)}}</label>
-            <label>{{VAL(Video/Writer[3]/tag)}}</label>
-        </row>
-        <row>
             <starRating hasUserSetRating="true">
                 <percentage>{{EVAL({{VAL(Video/userRating:0)}} * 10)}}</percentage>
             </starRating>{{CUT(Video/userRating:CUT:0=)}}
             <starRating>
                 <percentage>{{EVAL({{VAL(Video/rating:0)}} * 10)}}</percentage>
             </starRating>{{CUT(Video/userRating::0=CUT)}}
+            <label>{{VAL(Video/Director[3]/tag)}}</label>
+            <label>{{VAL(Video/Writer[3]/tag)}}</label>
+        </row>
+        <row>
+            <label />
             <label>{{VAL(Video/Director[4]/tag)}}</label>
             <label>{{VAL(Video/Writer[4]/tag)}}</label>
         </row>
