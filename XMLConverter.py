@@ -335,20 +335,19 @@ def XML_PMS2aTV(PMS_address, path, options):
     elif path.find('SearchResults') != -1:
         XMLtemplate = 'Channels/VideoSearchResults.xml'
     
-    # Overview case scanners
-    if cmd.find('Overview') != -1:
-        dprint(__name__, 0, "Overview scanner found, updating command.")
-        parts = cmd.split('_')
-        dir = parts[0].replace('Series', 'TVShow')
-        dir = dir.replace('Video', 'HomeVideo')
-        dir = dir.replace('iTunes', 'Music')
-        cmd = 'Overview'
-    
     # Special case scanners
     if cmd=='S_-_BABS':
         dprint(__name__, 1, "Found S - BABS.")
         dir = 'TVShow'
         cmd = 'NavigationBar'
+    # Overview case scanners
+    if cmd.find('Overview') != -1:
+        dprint(__name__, 0, "Overview scanner found, updating command.")
+        parts = cmd.split('_')
+        dir = parts[1].replace('Series', 'TVShow')
+        dir = dir.replace('Video', 'HomeVideo')
+        dir = dir.replace('iTunes', 'Music')
+        cmd = 'Overview'
     elif cmd.find('Scanner') != -1:
         dprint(__name__, 1, "Found Scanner.")
         parts = cmd.split('_')
