@@ -342,7 +342,7 @@ def XML_PMS2aTV(PMS_address, path, options):
         cmd = 'NavigationBar'
     # Overview case scanners
     if cmd.find('Overview') != -1:
-        dprint(__name__, 0, "Overview scanner found, updating command.")
+        dprint(__name__, 1, "Overview scanner found, updating command.")
         parts = cmd.split('_')
         dir = parts[1].replace('Series', 'TVShow')
         dir = dir.replace('Video', 'HomeVideo')
