@@ -103,8 +103,8 @@ def generate(PMS_uuid, url, authtoken, resolution, blurRadius, gradientTemplate,
         blurRadius = int(blurRadius / 1.5)
         layer = Image.open(stylepath + "/" + gradientTemplate + "_720.png")
     
+    # Set background resolution and merge layers
     try:
-        # Set background resolution and merge layers
         bgWidth, bgHeight = background.size
         dprint(__name__,1 ,"Background size: {0}, {1}", bgWidth, bgHeight)
         dprint(__name__,1 , "aTV Height: {0}, {1}", width, height)
@@ -121,30 +121,31 @@ def generate(PMS_uuid, url, authtoken, resolution, blurRadius, gradientTemplate,
 
         background.paste(layer, ( 0, 0), layer)
 
+        background = textToImage(stylepath, background, resolution, titleText, titleSize, textColor, align, valign, offsetx, offsety)
+
+        if subtitleText != "":
+            offsety = int(offsety) + int(lineheight)
+            background = textToImage(stylepath, background, resolution, subtitleText, subtitleSize, textColor, align, valign, offsetx, offsety)
+
+        # Handle 1080 / atv3 Text
+        statusSize = 20
+        statusX = 80
+        statusY = 25
+
+        if resolution == '1080':
+            statusSize = fullHDtext(statusSize)
+            statusX = fullHDtext(statusX)
+            statusY = fullHDtext(statusY)
+    
+        if statusText != "":
+            background = textToImage(stylepath, background, resolution, statusText, statusSize, textColor, "right", "top", statusX, statusY)
+
+        # Save to Cache
+        background.save(cachepath+"/"+cachefile)
     except:
         dprint(__name__, 0, 'Error - Failed to generate background image.\n{0}', traceback.format_exc())
         return "/thumbnails/Background_blank_" + resolution + ".jpg"
-
-    background = textToImage(stylepath, background, resolution, titleText, titleSize, textColor, align, valign, offsetx, offsety)
-
-    if subtitleText != "":
-        offsety = int(offsety) + int(lineheight)
-        background = textToImage(stylepath, background, resolution, subtitleText, subtitleSize, textColor, align, valign, offsetx, offsety)
-
-    # Handle 1080 / atv3 Text
     
-    statusSize = 20
-    statusX = 80
-    statusY = 25
-
-    if resolution == '1080':
-        statusSize = fullHDtext(statusSize)
-        statusX = fullHDtext(statusX)
-        statusY = fullHDtext(statusY)
-    
-    if statusText != "":
-            background = textToImage(stylepath, background, resolution, statusText, statusSize, textColor, "right", "top", statusX, statusY)
-
     dprint(__name__, 1, 'Cachefile  generated.')  # Debug
     return "/fanartcache/"+cachefile
 
