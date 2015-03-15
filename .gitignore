@@ -15,18 +15,18 @@ PlexConnect.log
 
 *.der
 
-<<<<<<< HEAD
-ATVSettings.py
 
-assets/templates/Library.xml
 
-assets/templates/Library.xml
-=======
+
+
+
+
+
 /assets/fanartcache/*.jpg
->>>>>>> upstream2/master
 
-assets/templates/Episode_Fanart.xml
 
-PILBackgrounds.py
 
-assets/templates/TVShow/Episode_List_Fanart.xml
+
+
+
+
