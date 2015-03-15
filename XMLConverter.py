@@ -336,8 +336,8 @@ def XML_PMS2aTV(PMS_address, path, options):
         XMLtemplate = 'Channels/VideoSearchResults.xml'
     
     # Special case scanners
-    if cmd=='S_-_BABS':
-        dprint(__name__, 1, "Found S - BABS.")
+    if cmd=='S_-_BABS' or cmd=='BABS':
+        dprint(__name__, 1, "Found S - BABS / BABS")
         dir = 'TVShow'
         cmd = 'NavigationBar'
     # Overview case scanners

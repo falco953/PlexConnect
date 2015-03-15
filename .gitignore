@@ -26,3 +26,7 @@ assets/templates/Library.xml
 >>>>>>> upstream2/master
 
 assets/templates/Episode_Fanart.xml
+
+PILBackgrounds.py
+
+assets/templates/TVShow/Episode_List_Fanart.xml
